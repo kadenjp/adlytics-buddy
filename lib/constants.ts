@@ -1,7 +1,7 @@
 // Stripe Configuration - Public values that can be committed to version control
 export const STRIPE_CONFIG = {
     // Price ID for your subscription plan (get this from Stripe Dashboard)
-    PRICE_ID: 'price_1234567890', // Replace with your actual price ID from Stripe
+    PRICE_ID: 'price_1RpHGXEKdF0kpDHEhzDcOouD', // Your actual Stripe price ID
 
     // Publishable key (safe to expose in client-side code)
     PUBLISHABLE_KEY: 'pk_test_51RpG3uEKdF0kpDHEk9uvZeRyTc3GTW6cQhuIcKa2iq9tRAN7n6i3T3NzUZRC0UuIq03E3xdRUpnC6WKvsFndfn3z00pnGvfLME',
