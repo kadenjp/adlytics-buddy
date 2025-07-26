@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+import { STRIPE_CONFIG } from './constants';
 
 // Handle missing environment variables during build
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
@@ -10,7 +11,7 @@ export const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
     apiVersion: '2025-06-30.basil',
 }) : null;
 
-export const STRIPE_PRICE_ID = process.env.STRIPE_PRICE_ID || 'price_1234567890'; // Replace with your actual price ID
+export const STRIPE_PRICE_ID = STRIPE_CONFIG.PRICE_ID;
 
 export async function createStripeCustomer(email: string, name: string) {
     if (!stripe) {
