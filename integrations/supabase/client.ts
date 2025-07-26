@@ -2,8 +2,8 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './types';
 
-const SUPABASE_URL = "https://hpupdxvbgzzvyxcmtnhn.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhwdXBkeHZiZ3p6dnl4Y210bmhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMyNDgxODAsImV4cCI6MjA2ODgyNDE4MH0.yvWldPjIZvuy6I3jvAuN045b6EYHK4HI8SjXtZg4plY";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const SUPABASE_PUBLISHABLE_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 const storage = typeof window !== 'undefined' ? localStorage : undefined;
 
