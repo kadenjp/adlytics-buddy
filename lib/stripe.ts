@@ -51,5 +51,7 @@ export async function createSubscription(
         payment_behavior: 'default_incomplete',
         payment_settings: { save_default_payment_method: 'on_subscription' },
         expand: ['latest_invoice.payment_intent'],
+        // Enable automatic tax only in production
+        automatic_tax: { enabled: process.env.NODE_ENV === 'production' },
     });
 }
