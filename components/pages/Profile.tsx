@@ -12,7 +12,9 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Separator } from '@/components/ui/separator';
 
 import { User, Mail, Phone, MapPin, Calendar, Shield, CreditCard, Camera, Edit3, CheckCircle } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { UserService } from '@/lib/supabase/UserService';
+import { supabaseUserInformationDatabase } from '@/lib/supabaseUserInformationDatabase';
+import { supabaseBusinessProfileDatabase } from '@/lib/supabaseBusinessProfileDatabase';
 import { useAuth } from '@/hooks/useAuth';
 
 const Profile = () => {
@@ -23,7 +25,7 @@ const Profile = () => {
     const [success, setSuccess] = useState('');
     const [error, setError] = useState('');
 
-    // Profile data state matching 'profiles' table
+    // Profile data state matching business_profiles and user_information tables
     const [profileData, setProfileData] = useState({
         email: '',
         ownerName: '',
@@ -38,27 +40,27 @@ const Profile = () => {
         setProfileData((prev) => ({ ...prev, [field]: value }));
     };
 
-    // Load profile from Supabase when user is available
+    // Use UserService for profile data loading
     useEffect(() => {
         if (!user) return;
+        const userService = new UserService(
+            supabaseUserInformationDatabase,
+            supabaseBusinessProfileDatabase
+        );
         const loadProfile = async () => {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('owner_name, business_name, industry, phone, address, business_goals')
-                .eq('user_id', user.id)
-                .single();
-            if (error && error.code !== 'PGRST116') {
-                console.error('Error loading profile:', error.message);
-            } else if (data) {
+            try {
+                const profile = await userService.getUserProfile(user.id);
                 setProfileData({
                     email: user.email || '',
-                    ownerName: data.owner_name || '',
-                    businessName: data.business_name || '',
-                    industry: data.industry || '',
-                    phone: data.phone || '',
-                    address: data.address || '',
-                    businessGoals: data.business_goals ? data.business_goals.join(', ') : ''
+                    ownerName: profile?.personal ? `${profile.personal.first_name || ''} ${profile.personal.last_name || ''}`.trim() : '',
+                    businessName: profile?.business?.business_name || '',
+                    industry: profile?.business?.industry || '',
+                    phone: profile?.personal?.phone || '',
+                    address: profile?.business?.business_address || '',
+                    businessGoals: profile?.business?.business_goals ? profile.business.business_goals.join(', ') : ''
                 });
+            } catch (err) {
+                setError('Failed to load profile. Please try again.');
             }
         };
         loadProfile();
@@ -68,19 +70,27 @@ const Profile = () => {
         setSaveLoading(true);
         setError('');
         setSuccess('');
+        const userService = new UserService(
+            supabaseUserInformationDatabase,
+            supabaseBusinessProfileDatabase
+        );
         try {
-            const { error } = await supabase
-                .from('profiles')
-                .upsert({
-                    user_id: user.id,
-                    owner_name: profileData.ownerName,
-                    business_name: profileData.businessName,
-                    industry: profileData.industry,
-                    phone: profileData.phone,
-                    address: profileData.address,
-                    business_goals: profileData.businessGoals.split(',').map(goal => goal.trim())
-                });
-            if (error) throw error;
+            // Update user_information
+            const [firstName, ...lastNameArr] = profileData.ownerName.split(' ');
+            const lastName = lastNameArr.join(' ');
+            await userService.updateUserInformation(user.id, {
+                first_name: firstName,
+                last_name: lastName,
+                email: profileData.email,
+                phone: profileData.phone
+            });
+            // Update business_profiles
+            await userService.updateBusinessProfile(user.id, {
+                business_name: profileData.businessName,
+                industry: profileData.industry,
+                business_address: profileData.address,
+                business_goals: profileData.businessGoals.split(',').map(goal => goal.trim())
+            });
             setSuccess('Profile updated successfully!');
             setIsEditing(false);
         } catch (err) {

@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Building2, Utensils, Scale, Hammer, Stethoscope, ShoppingBag, Car, GraduationCap, Users } from 'lucide-react';
+import { useBusinessInfoStep } from '@/hooks/useBusinessInfoStep';
 
 interface BusinessInfo {
     businessName: string;
@@ -41,13 +42,7 @@ export const BusinessInfoStep = ({
     onNext,
     onPrevious
 }: BusinessInfoStepProps) => {
-    const validateAndNext = () => {
-        if (!businessInfo.businessName) {
-            return;
-        }
-
-        onNext();
-    };
+    const { validateAndNext } = useBusinessInfoStep(businessInfo, onNext);
 
     return (
         <Card>

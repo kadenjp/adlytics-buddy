@@ -6,7 +6,9 @@ import { Progress } from '@/components/ui/progress';
 import { Zap } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import StripeProvider from '@/components/StripeProvider';
-import { supabase } from '@/integrations/supabase/client';
+import { UserService } from '@/lib/supabase/UserService';
+import { supabaseUserInformationDatabase } from '@/lib/supabaseUserInformationDatabase';
+import { supabaseBusinessProfileDatabase } from '@/lib/supabaseBusinessProfileDatabase';
 import { UserInfoStep, BusinessInfoStep, BusinessProfileStep, PaymentStep, WelcomeStep } from '@/components/signup';
 
 const initialUserInfo = {
@@ -139,39 +141,19 @@ const Signup = () => {
       try {
         // Update the business with additional profile information if any was provided
         if (businessProfile.address || businessProfile.businessGoals.length > 0 || businessProfile.targetAudience.length > 0) {
-          // First, get the user's business ID
-          const { data: businessUsers, error: businessUsersError } = await supabase
-            .from('business_users')
-            .select('business_id')
-            .eq('user_id', user?.id)
-            .eq('is_active', true)
-            .single();
-
-          if (businessUsersError || !businessUsers) {
-            setError('Could not find your business profile. Please contact support.');
-            setLoading(false);
-            return;
-          }
-
-          // Update the business with additional profile information
-          const { error: updateError } = await supabase
-            .from('businesses')
-            .update({
-              address: businessProfile.address ? { address: businessProfile.address } : null,
-              target_radius: businessProfile.targetRadius,
-              business_goals: businessProfile.businessGoals,
-              target_age_min: businessProfile.targetAge[0],
-              target_age_max: businessProfile.targetAge[1],
-              target_audience: businessProfile.targetAudience,
-              updated_at: new Date().toISOString()
-            })
-            .eq('id', businessUsers.business_id);
-
-          if (updateError) {
-            setError(updateError.message);
-            setLoading(false);
-            return;
-          }
+          const userService = new UserService(
+            supabaseUserInformationDatabase,
+            supabaseBusinessProfileDatabase
+          );
+          await userService.updateBusinessProfile(user?.id, {
+            business_address: businessProfile.address ? businessProfile.address : null,
+            target_radius: businessProfile.targetRadius,
+            business_goals: businessProfile.businessGoals,
+            target_age_min: businessProfile.targetAge[0],
+            target_age_max: businessProfile.targetAge[1],
+            target_audience: businessProfile.targetAudience,
+            updated_at: new Date().toISOString()
+          });
         }
 
         // Redirect to dashboard

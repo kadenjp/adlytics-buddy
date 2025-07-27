@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Check, AlertCircle, Zap } from 'lucide-react';
 import PaymentForm from '@/components/PaymentForm';
+import { usePaymentStep } from '@/hooks/usePaymentStep';
 
 interface UserInfo {
     firstName: string;
@@ -45,6 +46,8 @@ export const PaymentStep = ({
     onPrevious,
     setLoading
 }: PaymentStepProps) => {
+    const { handleTermsChecked } = usePaymentStep(setPaymentInfo);
+
     return (
         <Card>
             <CardHeader>
@@ -123,7 +126,7 @@ export const PaymentStep = ({
                     <Checkbox
                         id="terms"
                         checked={paymentInfo.termsAccepted}
-                        onCheckedChange={(checked) => setPaymentInfo({ ...paymentInfo, termsAccepted: !!checked })}
+                        onCheckedChange={handleTermsChecked}
                     />
                     <Label htmlFor="terms" className="text-sm">
                         I agree to the Terms of Service and Privacy Policy

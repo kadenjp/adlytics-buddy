@@ -178,3 +178,4 @@ export class GoogleAdsService {
         return true;
     }
 }
+// ...existing code from lib/supabase/google-ads.ts...

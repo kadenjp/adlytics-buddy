@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Zap } from 'lucide-react';
+import { useBusinessProfileStep } from '@/hooks/useBusinessProfileStep';
 
 interface BusinessProfile {
     address: string;
@@ -54,23 +55,7 @@ export const BusinessProfileStep = ({
     onPrevious,
     onSkip
 }: BusinessProfileStepProps) => {
-    const toggleBusinessGoal = (goal: string) => {
-        setBusinessProfile(prev => ({
-            ...prev,
-            businessGoals: prev.businessGoals.includes(goal)
-                ? prev.businessGoals.filter(g => g !== goal)
-                : [...prev.businessGoals, goal]
-        }));
-    };
-
-    const toggleTargetAudience = (audience: string) => {
-        setBusinessProfile(prev => ({
-            ...prev,
-            targetAudience: prev.targetAudience.includes(audience)
-                ? prev.targetAudience.filter(a => a !== audience)
-                : [...prev.targetAudience, audience]
-        }));
-    };
+    const { toggleBusinessGoal, toggleTargetAudience } = useBusinessProfileStep(setBusinessProfile);
 
     return (
         <Card>

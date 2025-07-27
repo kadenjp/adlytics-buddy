@@ -1,10 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createStripeCustomer, createSubscription } from '@/lib/stripe';
+import { createSubscription, generateStripeIdempotencyKey } from '@/lib/stripe';
+import { findOrCreateCustomerWithPayment } from '@/lib/customerRepository';
+import { stripePaymentProvider } from '@/lib/stripePaymentProvider';
+import { supabaseBusinessDatabase } from '@/lib/supabaseBusinessDatabase';
 import Stripe from 'stripe';
 
 export async function POST(req: NextRequest) {
     try {
-        const { email, name, paymentMethodId, address } = await req.json();
+        const { email, name, paymentMethodId, address, businessId } = await req.json();
 
         if (!email || !name || !paymentMethodId) {
             return NextResponse.json(
@@ -13,8 +16,19 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Create Stripe customer with address
-        const customer = await createStripeCustomer(email, name, address);
+        // Create idempotency key based on email to prevent duplicate customers
+        const idempotencyKey = generateStripeIdempotencyKey(email, 'customer');
+
+        // Create or find existing Stripe customer with database check using injected providers
+        const customer = await findOrCreateCustomerWithPayment(
+            supabaseBusinessDatabase,
+            stripePaymentProvider,
+            email,
+            name,
+            businessId,
+            address,
+            idempotencyKey
+        );
 
         // Create subscription
         const subscription = await createSubscription(customer.id, paymentMethodId);

@@ -66,22 +66,22 @@ export class AgencyService {
         const { data, error } = await supabase
             .from('agencies')
             .select(`
-        *,
-        agency_client_relationships!inner(
-          id,
-          status,
-          permissions,
-          created_at,
-          clients(
-            id,
-            business_name,
-            contact_name,
-            contact_email,
-            industry,
-            is_active
-          )
-        )
-      `)
+		*,
+		agency_client_relationships!inner(
+		  id,
+		  status,
+		  permissions,
+		  created_at,
+		  clients(
+			id,
+			business_name,
+			contact_name,
+			contact_email,
+			industry,
+			is_active
+		  )
+		)
+	  `)
             .eq('id', agencyId)
             .eq('agency_client_relationships.status', 'approved');
 
@@ -109,3 +109,4 @@ export class AgencyService {
         return data;
     }
 }
+// ...existing code from lib/supabase/agencies.ts...
