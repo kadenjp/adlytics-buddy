@@ -55,6 +55,118 @@ export type Database = {
           },
         ]
       }
+      user_information: {
+        Row: {
+          id: string;
+          user_id: string;
+          first_name: string;
+          last_name: string;
+          email: string;
+          phone: string | null;
+          avatar_url: string | null;
+          timezone: string | null;
+          language: string | null;
+          date_of_birth: string | null;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          first_name: string;
+          last_name: string;
+          email: string;
+          phone?: string | null;
+          avatar_url?: string | null;
+          timezone?: string | null;
+          language?: string | null;
+          date_of_birth?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          first_name?: string;
+          last_name?: string;
+          email?: string;
+          phone?: string | null;
+          avatar_url?: string | null;
+          timezone?: string | null;
+          language?: string | null;
+          date_of_birth?: string | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "user_information_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      },
+      business_profiles: {
+        Row: {
+          id: string;
+          user_id: string;
+          business_name: string;
+          industry: string;
+          business_type: "agency" | "client" | "direct";
+          website: string | null;
+          business_address: string | null;
+          business_goals: string[] | null;
+          target_age_min: number | null;
+          target_age_max: number | null;
+          target_audience: string[] | null;
+          target_radius: number | null;
+          created_at: string | null;
+          updated_at: string | null;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          business_name: string;
+          industry: string;
+          business_type: "agency" | "client" | "direct";
+          website?: string | null;
+          business_address?: string | null;
+          business_goals?: string[] | null;
+          target_age_min?: number | null;
+          target_age_max?: number | null;
+          target_audience?: string[] | null;
+          target_radius?: number | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Update: {
+          id?: string;
+          user_id?: string;
+          business_name?: string;
+          industry?: string;
+          business_type?: "agency" | "client" | "direct";
+          website?: string | null;
+          business_address?: string | null;
+          business_goals?: string[] | null;
+          target_age_min?: number | null;
+          target_age_max?: number | null;
+          target_audience?: string[] | null;
+          target_radius?: number | null;
+          created_at?: string | null;
+          updated_at?: string | null;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "business_profiles_user_id_fkey";
+            columns: ["user_id"];
+            isOneToOne: true;
+            referencedRelation: "users";
+            referencedColumns: ["id"];
+          }
+        ];
+      },
       agencies: {
         Row: {
           address: Json | null

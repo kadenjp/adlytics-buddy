@@ -153,9 +153,9 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
     // For invoice.payment_succeeded, we can update based on customer ID
     // The subscription will be updated separately via subscription events
     const customerId = invoice.customer as string;
-    
+
     console.log(`Payment succeeded for customer: ${customerId}, invoice: ${invoice.id}`);
-    
+
     // You could add additional logic here like:
     // - Sending payment confirmation emails
     // - Updating usage quotas
