@@ -55,118 +55,6 @@ export type Database = {
           },
         ]
       }
-      user_information: {
-        Row: {
-          id: string;
-          user_id: string;
-          first_name: string;
-          last_name: string;
-          email: string;
-          phone: string | null;
-          avatar_url: string | null;
-          timezone: string | null;
-          language: string | null;
-          date_of_birth: string | null;
-          created_at: string | null;
-          updated_at: string | null;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          first_name: string;
-          last_name: string;
-          email: string;
-          phone?: string | null;
-          avatar_url?: string | null;
-          timezone?: string | null;
-          language?: string | null;
-          date_of_birth?: string | null;
-          created_at?: string | null;
-          updated_at?: string | null;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          first_name?: string;
-          last_name?: string;
-          email?: string;
-          phone?: string | null;
-          avatar_url?: string | null;
-          timezone?: string | null;
-          language?: string | null;
-          date_of_birth?: string | null;
-          created_at?: string | null;
-          updated_at?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "user_information_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: true;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      },
-      business_profiles: {
-        Row: {
-          id: string;
-          user_id: string;
-          business_name: string;
-          industry: string;
-          business_type: "agency" | "client" | "direct";
-          website: string | null;
-          business_address: string | null;
-          business_goals: string[] | null;
-          target_age_min: number | null;
-          target_age_max: number | null;
-          target_audience: string[] | null;
-          target_radius: number | null;
-          created_at: string | null;
-          updated_at: string | null;
-        };
-        Insert: {
-          id?: string;
-          user_id: string;
-          business_name: string;
-          industry: string;
-          business_type: "agency" | "client" | "direct";
-          website?: string | null;
-          business_address?: string | null;
-          business_goals?: string[] | null;
-          target_age_min?: number | null;
-          target_age_max?: number | null;
-          target_audience?: string[] | null;
-          target_radius?: number | null;
-          created_at?: string | null;
-          updated_at?: string | null;
-        };
-        Update: {
-          id?: string;
-          user_id?: string;
-          business_name?: string;
-          industry?: string;
-          business_type?: "agency" | "client" | "direct";
-          website?: string | null;
-          business_address?: string | null;
-          business_goals?: string[] | null;
-          target_age_min?: number | null;
-          target_age_max?: number | null;
-          target_audience?: string[] | null;
-          target_radius?: number | null;
-          created_at?: string | null;
-          updated_at?: string | null;
-        };
-        Relationships: [
-          {
-            foreignKeyName: "business_profiles_user_id_fkey";
-            columns: ["user_id"];
-            isOneToOne: true;
-            referencedRelation: "users";
-            referencedColumns: ["id"];
-          }
-        ];
-      },
       agencies: {
         Row: {
           address: Json | null
@@ -210,15 +98,7 @@ export type Database = {
           updated_at?: string | null
           website?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "agencies_owner_id_fkey"
-            columns: ["owner_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       agency_client_relationships: {
         Row: {
@@ -384,9 +264,168 @@ export type Database = {
           },
         ]
       }
+      business_profiles: {
+        Row: {
+          business_address: string | null
+          business_goals: string[] | null
+          business_name: string
+          business_type: string | null
+          created_at: string
+          id: string
+          industry: string
+          target_age_max: number | null
+          target_age_min: number | null
+          target_audience: string[] | null
+          target_radius: number | null
+          updated_at: string
+          user_id: string
+          website: string | null
+        }
+        Insert: {
+          business_address?: string | null
+          business_goals?: string[] | null
+          business_name: string
+          business_type?: string | null
+          created_at?: string
+          id?: string
+          industry: string
+          target_age_max?: number | null
+          target_age_min?: number | null
+          target_audience?: string[] | null
+          target_radius?: number | null
+          updated_at?: string
+          user_id: string
+          website?: string | null
+        }
+        Update: {
+          business_address?: string | null
+          business_goals?: string[] | null
+          business_name?: string
+          business_type?: string | null
+          created_at?: string
+          id?: string
+          industry?: string
+          target_age_max?: number | null
+          target_age_min?: number | null
+          target_audience?: string[] | null
+          target_radius?: number | null
+          updated_at?: string
+          user_id?: string
+          website?: string | null
+        }
+        Relationships: []
+      }
+      business_users: {
+        Row: {
+          business_id: string
+          created_at: string | null
+          id: string
+          invited_at: string | null
+          invited_by: string | null
+          is_active: boolean | null
+          joined_at: string | null
+          permissions: Json | null
+          role: string
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          business_id: string
+          created_at?: string | null
+          id?: string
+          invited_at?: string | null
+          invited_by?: string | null
+          is_active?: boolean | null
+          joined_at?: string | null
+          permissions?: Json | null
+          role?: string
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          business_id?: string
+          created_at?: string | null
+          id?: string
+          invited_at?: string | null
+          invited_by?: string | null
+          is_active?: boolean | null
+          joined_at?: string | null
+          permissions?: Json | null
+          role?: string
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "business_users_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      businesses: {
+        Row: {
+          address: Json | null
+          business_goals: string[] | null
+          business_type: string | null
+          created_at: string | null
+          id: string
+          industry: string | null
+          is_active: boolean | null
+          name: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          target_age_max: number | null
+          target_age_min: number | null
+          target_audience: string[] | null
+          target_radius: number | null
+          updated_at: string | null
+          website: string | null
+        }
+        Insert: {
+          address?: Json | null
+          business_goals?: string[] | null
+          business_type?: string | null
+          created_at?: string | null
+          id?: string
+          industry?: string | null
+          is_active?: boolean | null
+          name: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          target_age_max?: number | null
+          target_age_min?: number | null
+          target_audience?: string[] | null
+          target_radius?: number | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Update: {
+          address?: Json | null
+          business_goals?: string[] | null
+          business_type?: string | null
+          created_at?: string | null
+          id?: string
+          industry?: string | null
+          is_active?: boolean | null
+          name?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          target_age_max?: number | null
+          target_age_min?: number | null
+          target_audience?: string[] | null
+          target_radius?: number | null
+          updated_at?: string | null
+          website?: string | null
+        }
+        Relationships: []
+      }
       campaigns: {
         Row: {
           budget_amount: number | null
+          business_id: string | null
           created_at: string
           id: string
           managed_by_agency_id: string | null
@@ -400,6 +439,7 @@ export type Database = {
         }
         Insert: {
           budget_amount?: number | null
+          business_id?: string | null
           created_at?: string
           id?: string
           managed_by_agency_id?: string | null
@@ -413,6 +453,7 @@ export type Database = {
         }
         Update: {
           budget_amount?: number | null
+          business_id?: string | null
           created_at?: string
           id?: string
           managed_by_agency_id?: string | null
@@ -425,6 +466,13 @@ export type Database = {
           website_url?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "campaigns_business_id_fkey"
+            columns: ["business_id"]
+            isOneToOne: false
+            referencedRelation: "businesses"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "campaigns_managed_by_agency_id_fkey"
             columns: ["managed_by_agency_id"]
@@ -480,20 +528,13 @@ export type Database = {
           user_id?: string
           website?: string | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "clients_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: false
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       google_ads_accounts: {
         Row: {
           access_token: string | null
           account_name: string | null
+          business_id: string | null
           created_at: string | null
           currency_code: string | null
           email: string
@@ -509,6 +550,7 @@ export type Database = {
         Insert: {
           access_token?: string | null
           account_name?: string | null
+          business_id?: string | null
           created_at?: string | null
           currency_code?: string | null
           email: string
@@ -524,6 +566,7 @@ export type Database = {
         Update: {
           access_token?: string | null
           account_name?: string | null
+          business_id?: string | null
           created_at?: string | null
           currency_code?: string | null
           email?: string
@@ -538,10 +581,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "google_ads_accounts_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "google_ads_accounts_business_id_fkey"
+            columns: ["business_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
         ]
@@ -693,67 +736,9 @@ export type Database = {
           },
         ]
       }
-      profiles: {
-        Row: {
-          address: string | null
-          business_goals: string[] | null
-          business_name: string
-          created_at: string
-          id: string
-          industry: string
-          owner_name: string
-          phone: string | null
-          target_age_max: number | null
-          target_age_min: number | null
-          target_audience: string[] | null
-          target_radius: number | null
-          updated_at: string
-          user_id: string
-        }
-        Insert: {
-          address?: string | null
-          business_goals?: string[] | null
-          business_name: string
-          created_at?: string
-          id?: string
-          industry: string
-          owner_name: string
-          phone?: string | null
-          target_age_max?: number | null
-          target_age_min?: number | null
-          target_audience?: string[] | null
-          target_radius?: number | null
-          updated_at?: string
-          user_id: string
-        }
-        Update: {
-          address?: string | null
-          business_goals?: string[] | null
-          business_name?: string
-          created_at?: string
-          id?: string
-          industry?: string
-          owner_name?: string
-          phone?: string | null
-          target_age_max?: number | null
-          target_age_min?: number | null
-          target_audience?: string[] | null
-          target_radius?: number | null
-          updated_at?: string
-          user_id?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "profiles_user_id_fkey"
-            columns: ["user_id"]
-            isOneToOne: true
-            referencedRelation: "users"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       reports: {
         Row: {
+          business_id: string | null
           created_at: string | null
           error_message: string | null
           expires_at: string | null
@@ -769,6 +754,7 @@ export type Database = {
           user_id: string
         }
         Insert: {
+          business_id?: string | null
           created_at?: string | null
           error_message?: string | null
           expires_at?: string | null
@@ -784,6 +770,7 @@ export type Database = {
           user_id: string
         }
         Update: {
+          business_id?: string | null
           created_at?: string | null
           error_message?: string | null
           expires_at?: string | null
@@ -800,10 +787,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "reports_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "reports_business_id_fkey"
+            columns: ["business_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
         ]
@@ -811,6 +798,7 @@ export type Database = {
       subscriptions: {
         Row: {
           amount: number
+          business_id: string | null
           created_at: string
           current_period_end: string | null
           current_period_start: string | null
@@ -822,6 +810,7 @@ export type Database = {
         }
         Insert: {
           amount?: number
+          business_id?: string | null
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
@@ -833,6 +822,7 @@ export type Database = {
         }
         Update: {
           amount?: number
+          business_id?: string | null
           created_at?: string
           current_period_end?: string | null
           current_period_start?: string | null
@@ -844,10 +834,10 @@ export type Database = {
         }
         Relationships: [
           {
-            foreignKeyName: "subscriptions_user_id_fkey"
-            columns: ["user_id"]
+            foreignKeyName: "subscriptions_business_id_fkey"
+            columns: ["business_id"]
             isOneToOne: false
-            referencedRelation: "users"
+            referencedRelation: "businesses"
             referencedColumns: ["id"]
           },
         ]
@@ -899,12 +889,68 @@ export type Database = {
           },
         ]
       }
+      user_information: {
+        Row: {
+          avatar_url: string | null
+          created_at: string | null
+          date_of_birth: string | null
+          email: string
+          first_name: string
+          id: string
+          language: string | null
+          last_name: string
+          phone: string | null
+          timezone: string | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          email: string
+          first_name: string
+          id?: string
+          language?: string | null
+          last_name: string
+          phone?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          created_at?: string | null
+          date_of_birth?: string | null
+          email?: string
+          first_name?: string
+          id?: string
+          language?: string | null
+          last_name?: string
+          phone?: string | null
+          timezone?: string | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_user_business_permissions: {
+        Args: { p_user_id: string; p_business_id: string }
+        Returns: Json
+      }
+      user_has_business_permission: {
+        Args: { p_business_id: string; p_permission: string }
+        Returns: boolean
+      }
+      user_is_business_admin: {
+        Args: { p_business_id: string }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never
@@ -921,116 +967,116 @@ type DefaultSchema = DatabaseWithoutInternals[Extract<keyof Database, "public">]
 
 export type Tables<
   DefaultSchemaTableNameOrOptions extends
-  | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof (DefaultSchema["Tables"] & DefaultSchema["Views"])
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
-  : never = never,
+    ? keyof (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
+        DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? (DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"] &
-    DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Views"])[TableName] extends {
       Row: infer R
     }
-  ? R
-  : never
+    ? R
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof (DefaultSchema["Tables"] &
-    DefaultSchema["Views"])
-  ? (DefaultSchema["Tables"] &
-    DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
-      Row: infer R
-    }
-  ? R
-  : never
-  : never
+        DefaultSchema["Views"])
+    ? (DefaultSchema["Tables"] &
+        DefaultSchema["Views"])[DefaultSchemaTableNameOrOptions] extends {
+        Row: infer R
+      }
+      ? R
+      : never
+    : never
 
 export type TablesInsert<
   DefaultSchemaTableNameOrOptions extends
-  | keyof DefaultSchema["Tables"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-    Insert: infer I
-  }
-  ? I
-  : never
+      Insert: infer I
+    }
+    ? I
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-    Insert: infer I
-  }
-  ? I
-  : never
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Insert: infer I
+      }
+      ? I
+      : never
+    : never
 
 export type TablesUpdate<
   DefaultSchemaTableNameOrOptions extends
-  | keyof DefaultSchema["Tables"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Tables"]
+    | { schema: keyof DatabaseWithoutInternals },
   TableName extends DefaultSchemaTableNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"]
+    : never = never,
 > = DefaultSchemaTableNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaTableNameOrOptions["schema"]]["Tables"][TableName] extends {
-    Update: infer U
-  }
-  ? U
-  : never
+      Update: infer U
+    }
+    ? U
+    : never
   : DefaultSchemaTableNameOrOptions extends keyof DefaultSchema["Tables"]
-  ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
-    Update: infer U
-  }
-  ? U
-  : never
-  : never
+    ? DefaultSchema["Tables"][DefaultSchemaTableNameOrOptions] extends {
+        Update: infer U
+      }
+      ? U
+      : never
+    : never
 
 export type Enums<
   DefaultSchemaEnumNameOrOptions extends
-  | keyof DefaultSchema["Enums"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["Enums"]
+    | { schema: keyof DatabaseWithoutInternals },
   EnumName extends DefaultSchemaEnumNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"]
+    : never = never,
 > = DefaultSchemaEnumNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[DefaultSchemaEnumNameOrOptions["schema"]]["Enums"][EnumName]
   : DefaultSchemaEnumNameOrOptions extends keyof DefaultSchema["Enums"]
-  ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
-  : never
+    ? DefaultSchema["Enums"][DefaultSchemaEnumNameOrOptions]
+    : never
 
 export type CompositeTypes<
   PublicCompositeTypeNameOrOptions extends
-  | keyof DefaultSchema["CompositeTypes"]
-  | { schema: keyof DatabaseWithoutInternals },
+    | keyof DefaultSchema["CompositeTypes"]
+    | { schema: keyof DatabaseWithoutInternals },
   CompositeTypeName extends PublicCompositeTypeNameOrOptions extends {
     schema: keyof DatabaseWithoutInternals
   }
-  ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
-  : never = never,
+    ? keyof DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"]
+    : never = never,
 > = PublicCompositeTypeNameOrOptions extends {
   schema: keyof DatabaseWithoutInternals
 }
   ? DatabaseWithoutInternals[PublicCompositeTypeNameOrOptions["schema"]]["CompositeTypes"][CompositeTypeName]
   : PublicCompositeTypeNameOrOptions extends keyof DefaultSchema["CompositeTypes"]
-  ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
-  : never
+    ? DefaultSchema["CompositeTypes"][PublicCompositeTypeNameOrOptions]
+    : never
 
 export const Constants = {
   public: {

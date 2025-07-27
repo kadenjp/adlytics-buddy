@@ -133,22 +133,39 @@ const Signup = () => {
     }
 
     if (currentStep === 5) {
-      // Update user profile with business information and redirect to dashboard
+      // Update business profile with additional business information and redirect to dashboard
       setLoading(true);
 
       try {
-        // Update the user's profile with additional business information if any was provided
+        // Update the business with additional profile information if any was provided
         if (businessProfile.address || businessProfile.businessGoals.length > 0 || businessProfile.targetAudience.length > 0) {
+          // First, get the user's business ID
+          const { data: businessUsers, error: businessUsersError } = await supabase
+            .from('business_users')
+            .select('business_id')
+            .eq('user_id', user?.id)
+            .eq('is_active', true)
+            .single();
+
+          if (businessUsersError || !businessUsers) {
+            setError('Could not find your business profile. Please contact support.');
+            setLoading(false);
+            return;
+          }
+
+          // Update the business with additional profile information
           const { error: updateError } = await supabase
-            .from('profiles')
+            .from('businesses')
             .update({
-              address: businessProfile.address,
+              address: businessProfile.address ? { address: businessProfile.address } : null,
               target_radius: businessProfile.targetRadius,
               business_goals: businessProfile.businessGoals,
-              target_age: businessProfile.targetAge,
-              target_audience: businessProfile.targetAudience
+              target_age_min: businessProfile.targetAge[0],
+              target_age_max: businessProfile.targetAge[1],
+              target_audience: businessProfile.targetAudience,
+              updated_at: new Date().toISOString()
             })
-            .eq('id', user?.id);
+            .eq('id', businessUsers.business_id);
 
           if (updateError) {
             setError(updateError.message);
