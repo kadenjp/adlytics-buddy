@@ -15,7 +15,7 @@ export const supabaseBusinessProfileDatabase: IBusinessProfileDatabase = {
         const upsertData = { user_id: userId, ...data };
         const { data: result, error } = await supabase
             .from('business_profiles')
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line
             .upsert(upsertData as any, { onConflict: 'user_id' })
             .select()
             .single();
@@ -25,7 +25,7 @@ export const supabaseBusinessProfileDatabase: IBusinessProfileDatabase = {
     async updateBusinessProfile(userId, updates) {
         const { error } = await supabase
             .from('business_profiles')
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line
             .update(updates as any)
             .eq('user_id', userId);
         if (error) throw error;

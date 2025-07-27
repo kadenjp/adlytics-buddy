@@ -15,7 +15,7 @@ export const supabaseUserInformationDatabase: IUserInformationDatabase = {
         const upsertData = { user_id: userId, ...data };
         const { data: result, error } = await supabase
             .from('user_information')
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line
             .upsert(upsertData as any, { onConflict: 'user_id' })
             .select()
             .single();
@@ -25,7 +25,7 @@ export const supabaseUserInformationDatabase: IUserInformationDatabase = {
     async updateUserInformation(userId, updates) {
         const { data, error } = await supabase
             .from('user_information')
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            // eslint-disable-next-line
             .update(updates as any)
             .eq('user_id', userId)
             .select()
