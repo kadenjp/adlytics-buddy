@@ -1,5 +1,6 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
+type AgencyClientRelationshipUpdate = Database['public']['Tables']['agency_client_relationships']['Update'];
 
 type Client = Database['public']['Tables']['clients']['Row'];
 type ClientInsert = Database['public']['Tables']['clients']['Insert'];
@@ -144,7 +145,7 @@ export class ClientService {
         status: 'approved' | 'rejected',
         approvedBy: string
     ) {
-        const updates: any = {
+        const updates: AgencyClientRelationshipUpdate = {
             status,
             approved_by: approvedBy,
         };
