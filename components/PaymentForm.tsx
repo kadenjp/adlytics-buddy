@@ -48,6 +48,17 @@ export default function PaymentForm({
     const stripe = useStripe();
     const elements = useElements();
     const [error, setError] = useState('');
+    const [address, setAddress] = useState({
+        line1: '',
+        city: '',
+        state: '',
+        postal_code: '',
+        country: '',
+    });
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setAddress({ ...address, [e.target.name]: e.target.value });
+    };
 
     const handleSubmit = async (event: React.FormEvent) => {
         event.preventDefault();
@@ -88,6 +99,7 @@ export default function PaymentForm({
                     email,
                     name,
                     paymentMethodId: paymentMethod.id,
+                    address,
                 }),
             });
 
@@ -116,13 +128,59 @@ export default function PaymentForm({
     };
 
     return (
-        <form onSubmit={handleSubmit} className="space-y-4">
-            {error && (
-                <Alert variant="destructive">
-                    <AlertCircle className="h-4 w-4" />
-                    <AlertDescription>{error}</AlertDescription>
-                </Alert>
-            )}
+        <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+                <Label htmlFor="line1">Address Line 1</Label>
+                <input
+                    id="line1"
+                    name="line1"
+                    type="text"
+                    value={address.line1}
+                    onChange={handleChange}
+                    required
+                    className="w-full border rounded px-2 py-1"
+                />
+                <Label htmlFor="city">City</Label>
+                <input
+                    id="city"
+                    name="city"
+                    type="text"
+                    value={address.city}
+                    onChange={handleChange}
+                    required
+                    className="w-full border rounded px-2 py-1"
+                />
+                <Label htmlFor="state">State</Label>
+                <input
+                    id="state"
+                    name="state"
+                    type="text"
+                    value={address.state}
+                    onChange={handleChange}
+                    required
+                    className="w-full border rounded px-2 py-1"
+                />
+                <Label htmlFor="postal_code">Postal Code</Label>
+                <input
+                    id="postal_code"
+                    name="postal_code"
+                    type="text"
+                    value={address.postal_code}
+                    onChange={handleChange}
+                    required
+                    className="w-full border rounded px-2 py-1"
+                />
+                <Label htmlFor="country">Country</Label>
+                <input
+                    id="country"
+                    name="country"
+                    type="text"
+                    value={address.country}
+                    onChange={handleChange}
+                    required
+                    className="w-full border rounded px-2 py-1"
+                />
+            </div>
 
             <div className="space-y-2">
                 <Label>Card Information</Label>
@@ -130,6 +188,13 @@ export default function PaymentForm({
                     <CardElement options={CARD_ELEMENT_OPTIONS} />
                 </div>
             </div>
+
+            {error && (
+                <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>{error}</AlertDescription>
+                </Alert>
+            )}
 
             <Button
                 type="submit"

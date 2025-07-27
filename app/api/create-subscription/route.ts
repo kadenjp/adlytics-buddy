@@ -4,7 +4,7 @@ import Stripe from 'stripe';
 
 export async function POST(req: NextRequest) {
     try {
-        const { email, name, paymentMethodId } = await req.json();
+        const { email, name, paymentMethodId, address } = await req.json();
 
         if (!email || !name || !paymentMethodId) {
             return NextResponse.json(
@@ -13,8 +13,8 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Create Stripe customer
-        const customer = await createStripeCustomer(email, name);
+        // Create Stripe customer with address
+        const customer = await createStripeCustomer(email, name, address);
 
         // Create subscription
         const subscription = await createSubscription(customer.id, paymentMethodId);
