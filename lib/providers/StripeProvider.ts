@@ -1,7 +1,7 @@
 import Stripe from 'stripe';
 // Removed supabase import; now handled in repository layer
 // Add Stripe.AddressParam type for address
-import { STRIPE_CONFIG } from './constants';
+import { STRIPE_CONFIG } from '../constants';
 
 // Handle missing environment variables during build
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;

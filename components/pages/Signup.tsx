@@ -1,183 +1,34 @@
 'use client'
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Progress } from '@/components/ui/progress';
 import { Zap } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import StripeProvider from '@/components/StripeProvider';
-import { UserService } from '@/lib/supabase/UserService';
-import { supabaseUserInformationDatabase } from '@/lib/supabaseUserInformationDatabase';
-import { supabaseBusinessProfileDatabase } from '@/lib/supabaseBusinessProfileDatabase';
 import { UserInfoStep, BusinessInfoStep, BusinessProfileStep, PaymentStep, WelcomeStep } from '@/components/signup';
-
-const initialUserInfo = {
-  firstName: '',
-  lastName: '',
-  email: '',
-  password: '',
-  phone: '',
-  promoCode: ''
-};
-
-const initialBusinessInfo = {
-  businessName: '',
-  industry: ''
-};
-
-const initialBusinessProfile = {
-  address: '',
-  targetRadius: 25,
-  businessGoals: [] as string[],
-  targetAge: [25, 55] as [number, number],
-  targetAudience: [] as string[]
-};
-
-const initialPaymentInfo = {
-  termsAccepted: false
-};
+import { useSignup } from '@/hooks/useSignup';
 
 const Signup = () => {
-  const [currentStep, setCurrentStep] = useState(1);
-  const [userInfo, setUserInfo] = useState(initialUserInfo);
-  const [businessInfo, setBusinessInfo] = useState(initialBusinessInfo);
-  const [businessProfile, setBusinessProfile] = useState(initialBusinessProfile);
-  const [paymentInfo, setPaymentInfo] = useState(initialPaymentInfo);
-  const [stripeCustomerId, setStripeCustomerId] = useState('');
-  const [stripeSubscriptionId, setStripeSubscriptionId] = useState('');
-  const [error, setError] = useState('');
-  const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const { signUp, isAuthenticated, user } = useAuth();
-
-  // Redirect if already authenticated and not on step 5
-  if (isAuthenticated && currentStep < 5) {
-    router.push('/dashboard');
-    return null;
-  }
-
-  const handlePaymentSuccess = async (customerId: string, subscriptionId: string) => {
-    setStripeCustomerId(customerId);
-    setStripeSubscriptionId(subscriptionId);
-
-    // Create user account immediately after successful payment
-    setLoading(true);
-    try {
-      const { error: authError } = await signUp(userInfo.email, userInfo.password, {
-        business_name: businessInfo.businessName,
-        first_name: userInfo.firstName,
-        last_name: userInfo.lastName,
-        industry: businessInfo.industry,
-        phone: userInfo.phone,
-        promo_code: userInfo.promoCode,
-        stripe_customer_id: customerId,
-        stripe_subscription_id: subscriptionId
-      });
-
-      if (authError) {
-        setError(`Payment successful but account creation failed: ${authError.message}`);
-        setLoading(false);
-        return;
-      }
-
-      setLoading(false);
-      setCurrentStep(5); // Go to welcome step
-    } catch (err) {
-      setError('Payment successful but account creation failed. Please contact support.');
-      setLoading(false);
-    }
-  };
-
-  const handlePaymentError = (message: string) => {
-    setError(message);
-  };
-
-  const nextStep = async () => {
-    setError('');
-
-    if (currentStep === 1) {
-      // Validate user info
-      if (!userInfo.email || !userInfo.password) {
-        setError('Email and password are required');
-        return;
-      }
-
-      if (!userInfo.firstName || !userInfo.lastName) {
-        setError('First name and last name are required');
-        return;
-      }
-
-      setCurrentStep(2);
-      return;
-    }
-
-    if (currentStep === 2) {
-      // Validate business info
-      if (!businessInfo.businessName) {
-        setError('Business name is required');
-        return;
-      }
-
-      setCurrentStep(3);
-      return;
-    }
-
-    if (currentStep === 3) {
-      // Business profile step - no validation needed, just continue
-      setCurrentStep(4);
-      return;
-    }
-
-    if (currentStep === 4) {
-      // Payment will be handled by the PaymentForm component
-      // Don't advance step here - PaymentForm will call handlePaymentSuccess
-      return;
-    }
-
-    if (currentStep === 5) {
-      // Update business profile with additional business information and redirect to dashboard
-      setLoading(true);
-
-      try {
-        // Update the business with additional profile information if any was provided
-        if (businessProfile.address || businessProfile.businessGoals.length > 0 || businessProfile.targetAudience.length > 0) {
-          const userService = new UserService(
-            supabaseUserInformationDatabase,
-            supabaseBusinessProfileDatabase
-          );
-          await userService.updateBusinessProfile(user?.id, {
-            business_address: businessProfile.address ? businessProfile.address : null,
-            target_radius: businessProfile.targetRadius,
-            business_goals: businessProfile.businessGoals,
-            target_age_min: businessProfile.targetAge[0],
-            target_age_max: businessProfile.targetAge[1],
-            target_audience: businessProfile.targetAudience,
-            updated_at: new Date().toISOString()
-          });
-        }
-
-        // Redirect to dashboard
-        setLoading(false);
-        router.push('/dashboard');
-
-      } catch (err) {
-        setError('An unexpected error occurred. Please try again.');
-        setLoading(false);
-      }
-
-      return;
-    }
-  };
-
-  const prevStep = () => {
-    if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
-    }
-  };
-
-  const skipToPayment = () => {
-    setCurrentStep(4); // Go to payment step
-  };
+  const auth = useAuth();
+  const {
+    currentStep,
+    setCurrentStep,
+    userInfo,
+    setUserInfo,
+    businessInfo,
+    setBusinessInfo,
+    businessProfile,
+    setBusinessProfile,
+    paymentInfo,
+    setPaymentInfo,
+    error,
+    loading,
+    setLoading,
+    nextStep,
+    prevStep,
+    skipToPayment,
+    handlePaymentSuccess,
+    handlePaymentError,
+    isAuthenticated
+  } = useSignup(auth);
 
   const renderStepIndicator = () => (
     <div className="flex items-center justify-center space-x-4 mb-8">
@@ -260,6 +111,11 @@ const Signup = () => {
         return null;
     }
   };
+
+  if (isAuthenticated && currentStep < 5) {
+    // Redirect handled in useSignup
+    return null;
+  }
 
   return (
     <StripeProvider>

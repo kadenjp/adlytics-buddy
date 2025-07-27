@@ -1,4 +1,5 @@
-import { IPaymentProvider, IBusinessDatabase } from '../interfaces/interfaces';
+import { IPaymentProvider } from '../interfaces/IPaymentProvider';
+import { IBusinessDatabase } from '../interfaces/IBusinessDatabase';
 
 export async function findOrCreateCustomerWithPayment(
     db: IBusinessDatabase,
@@ -6,10 +7,10 @@ export async function findOrCreateCustomerWithPayment(
     email: string,
     name: string,
     businessId?: string,
-    address?: any,
+    address?: Record<string, unknown>,
     idempotencyKey?: string
-): Promise<any> {
-    let business = businessId
+): Promise<{ id: string;[key: string]: unknown } | null> {
+    const business = businessId
         ? await db.getBusinessById(businessId)
         : await db.getBusinessByEmail(email);
 

@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { IBusinessDatabase } from '../interfaces/interfaces';
+import { IBusinessDatabase } from '../interfaces/IBusinessDatabase';
 
 export const supabaseBusinessDatabase: IBusinessDatabase = {
     async getBusinessByEmail(email: string) {

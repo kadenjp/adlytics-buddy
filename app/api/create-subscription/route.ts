@@ -1,9 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSubscription, generateStripeIdempotencyKey } from '@/lib/stripe';
-import { findOrCreateCustomerWithPayment } from '@/lib/customerRepository';
-import { stripePaymentProvider } from '@/lib/stripePaymentProvider';
-import { supabaseBusinessDatabase } from '@/lib/supabaseBusinessDatabase';
+import { createSubscription, generateStripeIdempotencyKey } from '@/lib/providers/StripeProvider';
+import { findOrCreateCustomerWithPayment } from '@/lib/repositories/CustomerRepository';
+
+import { supabaseBusinessDatabase } from '@/lib/providers/SupabaseBusinessDatabaseProvider';
 import Stripe from 'stripe';
+import { stripePaymentProvider } from '@/lib/providers/StripePaymentProvider';
 
 export async function POST(req: NextRequest) {
     try {
@@ -31,7 +32,7 @@ export async function POST(req: NextRequest) {
         );
 
         // Create subscription
-        const subscription = await createSubscription(customer.id, paymentMethodId);
+        const subscription = await createSubscription(customer.id as string, paymentMethodId);
 
         // Handle the expanded payment_intent properly
         const invoice = subscription.latest_invoice as Stripe.Invoice & {
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
         const clientSecret = invoice?.payment_intent?.client_secret || null;
 
         return NextResponse.json({
-            customerId: customer.id,
+            customerId: customer.id as string,
             subscriptionId: subscription.id,
             clientSecret,
             status: subscription.status,

@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { IBusinessProfileDatabase } from '../interfaces/interfaces';
+import { IBusinessProfileDatabase } from '../interfaces/IBusinessProfileDatabase';
 
 export const supabaseBusinessProfileDatabase: IBusinessProfileDatabase = {
     async getBusinessProfile(userId) {
@@ -15,7 +15,8 @@ export const supabaseBusinessProfileDatabase: IBusinessProfileDatabase = {
         const upsertData = { user_id: userId, ...data };
         const { data: result, error } = await supabase
             .from('business_profiles')
-            .upsert(upsertData, { onConflict: 'user_id' })
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .upsert(upsertData as any, { onConflict: 'user_id' })
             .select()
             .single();
         if (error) throw error;
@@ -24,7 +25,8 @@ export const supabaseBusinessProfileDatabase: IBusinessProfileDatabase = {
     async updateBusinessProfile(userId, updates) {
         const { error } = await supabase
             .from('business_profiles')
-            .update(updates)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .update(updates as any)
             .eq('user_id', userId);
         if (error) throw error;
     },

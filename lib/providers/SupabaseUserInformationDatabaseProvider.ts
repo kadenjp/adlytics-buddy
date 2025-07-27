@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { IUserInformationDatabase } from '../interfaces/interfaces';
+import { IUserInformationDatabase } from '../interfaces/IUserInformationDatabase';
 
 export const supabaseUserInformationDatabase: IUserInformationDatabase = {
     async getUserInformation(userId) {
@@ -15,7 +15,8 @@ export const supabaseUserInformationDatabase: IUserInformationDatabase = {
         const upsertData = { user_id: userId, ...data };
         const { data: result, error } = await supabase
             .from('user_information')
-            .upsert(upsertData, { onConflict: 'user_id' })
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .upsert(upsertData as any, { onConflict: 'user_id' })
             .select()
             .single();
         if (error) throw error;
@@ -24,7 +25,8 @@ export const supabaseUserInformationDatabase: IUserInformationDatabase = {
     async updateUserInformation(userId, updates) {
         const { data, error } = await supabase
             .from('user_information')
-            .update(updates)
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            .update(updates as any)
             .eq('user_id', userId)
             .select()
             .single();

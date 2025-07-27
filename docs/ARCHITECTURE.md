@@ -64,6 +64,41 @@ const customerRepo = new CustomerRepository(userService, paymentProvider);
 
 ---
 
+
+## Screen Creation & Custom Hooks
+
+When creating a new screen (UI page/component):
+
+- **Create a custom hook** (e.g., `useSignup`, `useProfile`) to manage all business logic, state, and actions for the screen.
+- The hook should:
+  - Encapsulate state and business logic, keeping UI components focused on rendering.
+  - Use and coordinate repositories, services, and providers for data access and workflows.
+  - Expose only the data and actions needed by the UI.
+  - Be easily testable in isolation (unit tests for hooks).
+- The UI component should:
+  - Call the custom hook and use its returned state/actions.
+  - Avoid direct business logic or data access.
+
+**Benefits:**
+- Consistent separation of concerns.
+- Improved testability and maintainability.
+- Reusable business logic across screens/components.
+
+**Example:**
+```tsx
+// In a screen component
+const {
+  userInfo,
+  setUserInfo,
+  loading,
+  nextStep,
+  ...
+} = useSignup(auth);
+```
+
+Refer to hooks for business logic, and use repositories/services/providers for data and integrations.
+
+---
 ## Best Practices
 - Keep business logic in services, not UI components.
 - Use interfaces for all external dependencies.

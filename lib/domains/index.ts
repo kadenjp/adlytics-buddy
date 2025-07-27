@@ -1,4 +1,4 @@
-export { AgencyService } from './agencies';
-export { ClientService } from './clients';
-export { CampaignService } from './campaigns';
-export { GoogleAdsService } from './google-ads';
+export { AgencyService } from './Agency';
+export { ClientService } from './Client';
+export { CampaignService } from './Campaign';
+export { GoogleAdsService } from './GoogleAds';

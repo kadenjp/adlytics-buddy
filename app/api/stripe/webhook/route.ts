@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/stripe';
-import { supabaseSubscriptionDatabase } from '@/lib/supabaseSubscriptionDatabase';
-import { ISubscriptionDatabase } from '@/lib/interfaces/interfaces';
+import { stripe } from '@/lib/providers/StripeProvider';
+import { supabaseSubscriptionDatabase } from '@/lib/providers/SupabaseSubscriptionDatabaseProvider';
+import { ISubscriptionDatabase } from '@/lib/interfaces/ISubscriptionDatabase';
 import Stripe from 'stripe';
 
 // Use injected subscription database provider

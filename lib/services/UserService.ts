@@ -1,4 +1,5 @@
-import { IUserInformationDatabase, IBusinessProfileDatabase } from '../interfaces/interfaces';
+import { IUserInformationDatabase } from '../interfaces/IUserInformationDatabase';
+import { IBusinessProfileDatabase } from '../interfaces/IBusinessProfileDatabase';
 import {
     UserInformation,
     UserInformationInsert,
@@ -28,8 +29,8 @@ export class UserService {
             // For now, return empty arrays for agencies/clients
             if (!personalInfo) return null;
             return {
-                personal: personalInfo,
-                business: businessProfile || null,
+                personal: personalInfo as UserInformation,
+                business: (businessProfile as BusinessProfile) || null,
                 agencies: [],
                 clients: []
             };
@@ -47,7 +48,8 @@ export class UserService {
         data: Partial<UserInformationInsert>
     ): Promise<UserInformation> {
         try {
-            return await this.userInformationDb.upsertUserInformation(userId, data);
+            const result = await this.userInformationDb.upsertUserInformation(userId, data);
+            return result as UserInformation;
         } catch (error) {
             console.error("Error upserting user information:", error);
             throw error;
@@ -62,7 +64,8 @@ export class UserService {
         data: Partial<BusinessProfileInsert>
     ): Promise<BusinessProfile> {
         try {
-            return await this.businessProfileDb.upsertBusinessProfile(userId, data);
+            const result = await this.businessProfileDb.upsertBusinessProfile(userId, data);
+            return result as BusinessProfile;
         } catch (error) {
             console.error("Error upserting business profile:", error);
             throw error;
@@ -122,7 +125,8 @@ export class UserService {
         updates: UserInformationUpdate
     ): Promise<UserInformation> {
         try {
-            return await this.userInformationDb.updateUserInformation(userId, updates);
+            const result = await this.userInformationDb.updateUserInformation(userId, updates);
+            return result as UserInformation;
         } catch (error) {
             console.error("Error updating user information:", error);
             throw error;
