@@ -1,4 +1,5 @@
 import Stripe from 'stripe';
+// Add Stripe.AddressParam type for address
 import { STRIPE_CONFIG } from './constants';
 
 // Handle missing environment variables during build
@@ -13,13 +14,14 @@ export const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {
 
 export const STRIPE_PRICE_ID = STRIPE_CONFIG.PRICE_ID;
 
-export async function createStripeCustomer(email: string, name: string) {
+export async function createStripeCustomer(email: string, name: string, address?: Stripe.AddressParam) {
     if (!stripe) {
         throw new Error('Stripe is not configured');
     }
     return stripe.customers.create({
         email,
         name,
+        address,
     });
 }
 
