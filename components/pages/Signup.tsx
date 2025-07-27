@@ -16,6 +16,7 @@ import { Zap, Building2, Utensils, Scale, Hammer, Stethoscope, ShoppingBag, Car,
 import { useAuth } from '@/hooks/useAuth';
 import StripeProvider from '@/components/StripeProvider';
 import PaymentForm from '@/components/PaymentForm';
+import { supabase } from '@/integrations/supabase/client';
 
 const initialBusinessInfo = {
   businessName: '',
@@ -82,10 +83,10 @@ const Signup = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { signUp, isAuthenticated } = useAuth();
+  const { signUp, isAuthenticated, user } = useAuth();
 
-  // Redirect if already authenticated
-  if (isAuthenticated) {
+  // Redirect if already authenticated and not on step 4
+  if (isAuthenticated && currentStep < 4) {
     router.push('/dashboard');
     return null;
   }
@@ -108,10 +109,37 @@ const Signup = () => {
     }));
   };
 
-  const handlePaymentSuccess = (customerId: string, subscriptionId: string) => {
+  const handlePaymentSuccess = async (customerId: string, subscriptionId: string) => {
     setStripeCustomerId(customerId);
     setStripeSubscriptionId(subscriptionId);
-    setCurrentStep(currentStep + 1);
+
+    // Create user account immediately after successful payment
+    setLoading(true);
+    try {
+      const { error: authError } = await signUp(businessInfo.email, businessInfo.password, {
+        business_name: businessInfo.businessName,
+        owner_name: businessInfo.ownerName,
+        industry: businessInfo.industry,
+        phone: businessInfo.phone,
+        promo_code: businessInfo.promoCode,
+        stripe_customer_id: customerId,
+        stripe_subscription_id: subscriptionId
+      });
+
+      if (authError) {
+        setError(`Payment successful but account creation failed: ${authError.message}`);
+        setLoading(false);
+        return;
+      }
+
+      setLoading(false);
+      setCurrentStep(4); // Go to welcome step
+    } catch (err) {
+      setError('Payment successful but account creation failed. Please contact support.');
+      setLoading(false);
+    }
+  }; const skipAdditionalSetup = () => {
+    setCurrentStep(3); // Go to payment step
   };
 
   const handlePaymentError = (message: string) => {
@@ -138,46 +166,45 @@ const Signup = () => {
     }
 
     if (currentStep === 2) {
+      // Business profile step - no validation needed, just continue
+      setCurrentStep(currentStep + 1);
+      return;
+    }
+
+    if (currentStep === 3) {
       // Payment will be handled by the PaymentForm component
       // Don't advance step here - PaymentForm will call handlePaymentSuccess
       return;
     }
 
-    if (currentStep === 3) {
-      // Validate business profile and create account with all collected info
-      if (!businessProfile.address) {
-        setError('Business address is required');
-        return;
-      }
-
+    if (currentStep === 4) {
+      // Update user profile with business information and redirect to dashboard
       setLoading(true);
 
       try {
-        // Create account with all collected information
-        const { error: authError } = await signUp(businessInfo.email, businessInfo.password, {
-          business_name: businessInfo.businessName,
-          owner_name: businessInfo.ownerName,
-          industry: businessInfo.industry,
-          phone: businessInfo.phone,
-          promo_code: businessInfo.promoCode,
-          address: businessProfile.address,
-          target_radius: businessProfile.targetRadius,
-          business_goals: businessProfile.businessGoals,
-          target_age: businessProfile.targetAge,
-          target_audience: businessProfile.targetAudience,
-          stripe_customer_id: stripeCustomerId,
-          stripe_subscription_id: stripeSubscriptionId
-        });
+        // Update the user's profile with additional business information if any was provided
+        if (businessProfile.address || businessProfile.businessGoals.length > 0 || businessProfile.targetAudience.length > 0) {
+          const { error: updateError } = await supabase
+            .from('profiles')
+            .update({
+              address: businessProfile.address,
+              target_radius: businessProfile.targetRadius,
+              business_goals: businessProfile.businessGoals,
+              target_age: businessProfile.targetAge,
+              target_audience: businessProfile.targetAudience
+            })
+            .eq('id', user?.id);
 
-        if (authError) {
-          setError(authError.message);
-          setLoading(false);
-          return;
+          if (updateError) {
+            setError(updateError.message);
+            setLoading(false);
+            return;
+          }
         }
 
-        // If signup successful, move to welcome step
+        // Redirect to dashboard
         setLoading(false);
-        setCurrentStep(currentStep + 1);
+        router.push('/dashboard');
 
       } catch (err) {
         setError('An unexpected error occurred. Please try again.');
@@ -351,8 +378,8 @@ const Signup = () => {
             </Card>
           )}
 
-          {/* Step 2: Platform Subscription */}
-          {currentStep === 2 && (
+          {/* Step 3: Platform Subscription */}
+          {currentStep === 3 && (
             <Card>
               <CardHeader>
                 <CardTitle>Platform Subscription</CardTitle>
@@ -417,6 +444,15 @@ const Signup = () => {
                   />
                 </div>
 
+                {loading && (
+                  <Alert>
+                    <AlertCircle className="h-4 w-4" />
+                    <AlertDescription>
+                      Processing payment and creating your account...
+                    </AlertDescription>
+                  </Alert>
+                )}
+
                 <div className="flex items-center space-x-2">
                   <Checkbox
                     id="terms"
@@ -441,13 +477,13 @@ const Signup = () => {
             </Card>
           )}
 
-          {/* Step 3: Business Profile */}
-          {currentStep === 3 && (
+          {/* Step 2: Business Profile */}
+          {currentStep === 2 && (
             <Card>
               <CardHeader>
-                <CardTitle>Business Profile</CardTitle>
+                <CardTitle>Tell us about your business (Optional)</CardTitle>
                 <CardDescription>
-                  Help us understand your customers and goals
+                  This helps us create more targeted campaigns and better recommendations for your industry
                 </CardDescription>
               </CardHeader>
               <CardContent className="space-y-6">
@@ -458,8 +494,23 @@ const Signup = () => {
                   </Alert>
                 )}
 
+                <div className="bg-primary/5 border border-primary/20 rounded-lg p-4 mb-6">
+                  <div className="flex items-start space-x-3">
+                    <Zap className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
+                    <div>
+                      <p className="font-medium text-primary">How this helps you:</p>
+                      <ul className="text-sm text-muted-foreground mt-2 space-y-1">
+                        <li>• Get industry-specific campaign templates</li>
+                        <li>• Receive targeted keyword suggestions</li>
+                        <li>• See relevant examples and best practices</li>
+                        <li>• Get personalized optimization tips</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="space-y-2">
-                  <Label htmlFor="address">Business Address</Label>
+                  <Label htmlFor="address">Business Address (Optional)</Label>
                   <Input
                     id="address"
                     placeholder="123 Main St, City, State"
@@ -485,7 +536,7 @@ const Signup = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <Label>Business Goals (Select all that apply)</Label>
+                  <Label>Business Goals (Optional - Select any that apply)</Label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {businessGoals.map((goal) => (
                       <div
@@ -522,7 +573,7 @@ const Signup = () => {
                 </div>
 
                 <div className="space-y-4">
-                  <Label>Target Audience (Select all that apply)</Label>
+                  <Label>Target Audience (Optional - Select any that apply)</Label>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {targetAudiences.map((audience) => (
                       <div
@@ -544,11 +595,11 @@ const Signup = () => {
               </CardContent>
               <div className="p-6 pt-0">
                 <div className="flex justify-between">
-                  <Button variant="outline" onClick={prevStep} disabled={loading}>
-                    Previous
+                  <Button variant="outline" onClick={skipAdditionalSetup} disabled={loading}>
+                    Skip to Payment
                   </Button>
                   <Button onClick={nextStep} disabled={loading}>
-                    {loading ? 'Creating Account...' : 'Create Account'}
+                    Continue to Payment
                   </Button>
                 </div>
               </div>
@@ -572,8 +623,8 @@ const Signup = () => {
                   {[
                     {
                       icon: <Check className="h-5 w-5 text-success" />,
-                      title: "Account Created",
-                      description: "Your business profile is set up and ready"
+                      title: "Account Created & Payment Processed",
+                      description: "Your business profile is set up and subscription is active"
                     },
                     {
                       icon: <Check className="h-5 w-5 text-success" />,
@@ -616,10 +667,10 @@ const Signup = () => {
                 </div>
 
                 <div className="flex space-x-4">
-                  <Button variant="outline" className="flex-1">
+                  <Button variant="outline" className="flex-1" onClick={() => router.push('/dashboard')}>
                     Take a Tour
                   </Button>
-                  <Button variant="cta" className="flex-1">
+                  <Button variant="cta" className="flex-1" onClick={() => router.push('/dashboard')}>
                     Start Building
                   </Button>
                 </div>
