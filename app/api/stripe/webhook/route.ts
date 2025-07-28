@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { stripe } from '@/lib/providers/StripeProvider';
-import { supabaseSubscriptionDatabase } from '@/lib/providers/SupabaseSubscriptionDatabaseProvider';
+import { stripe } from '@/lib/providers/stripe/StripeProvider';
+import { supabaseSubscriptionDatabase } from '@/lib/providers/supabase/SupabaseSubscriptionDatabaseProvider';
 import { ISubscriptionDatabase } from '@/lib/interfaces/ISubscriptionDatabase';
 import Stripe from 'stripe';
 

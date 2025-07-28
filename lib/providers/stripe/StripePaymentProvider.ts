@@ -1,4 +1,4 @@
-import { IPaymentProvider } from '../interfaces/IPaymentProvider';
+import { IPaymentProvider } from '../../interfaces/IPaymentProvider';
 import { stripe } from './StripeProvider';
 
 export const stripePaymentProvider: IPaymentProvider = {
