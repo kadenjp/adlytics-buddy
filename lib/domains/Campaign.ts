@@ -1,7 +1,8 @@
+// Import necessary modules
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
-type Campaign = Database['public']['Tables']['campaigns']['Row'];
+type _Campaign = Database['public']['Tables']['campaigns']['Row'];
 type CampaignInsert = Database['public']['Tables']['campaigns']['Insert'];
 type CampaignUpdate = Database['public']['Tables']['campaigns']['Update'];
 
@@ -13,13 +14,13 @@ export class CampaignService {
         const { data, error } = await supabase
             .from('campaigns')
             .select(`
-        *,
-        budget_schedules(*),
-        keywords(*),
-        ads(*),
-        targeting_settings(*),
-        performance_metrics(*)
-      `)
+		*,
+		budget_schedules(*),
+		keywords(*),
+		ads(*),
+		targeting_settings(*),
+		performance_metrics(*)
+	  `)
             .eq('user_id', userId)
             .order('created_at', { ascending: false });
 
@@ -37,13 +38,13 @@ export class CampaignService {
         const { data, error } = await supabase
             .from('campaigns')
             .select(`
-        *,
-        budget_schedules(*),
-        keywords(*),
-        ads(*),
-        targeting_settings(*),
-        performance_metrics(*)
-      `)
+		*,
+		budget_schedules(*),
+		keywords(*),
+		ads(*),
+		targeting_settings(*),
+		performance_metrics(*)
+	  `)
             .eq('managed_by_agency_id', agencyId)
             .order('created_at', { ascending: false });
 
@@ -132,13 +133,13 @@ export class CampaignService {
         const { data, error } = await supabase
             .from('campaigns')
             .select(`
-        *,
-        budget_schedules(*),
-        keywords(*),
-        ads(*),
-        targeting_settings(*),
-        performance_metrics(*)
-      `)
+		*,
+		budget_schedules(*),
+		keywords(*),
+		ads(*),
+		targeting_settings(*),
+		performance_metrics(*)
+	  `)
             .eq('id', campaignId)
             .single();
 
@@ -149,3 +150,4 @@ export class CampaignService {
         return data;
     }
 }
+// ...existing code from lib/supabase/campaigns.ts...

@@ -8,6 +8,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Slider } from '@/components/ui/slider';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Zap } from 'lucide-react';
+import { useBusinessProfileStep } from '@/hooks/useBusinessProfileStep';
 
 interface BusinessProfile {
     address: string;
@@ -54,23 +55,7 @@ export const BusinessProfileStep = ({
     onPrevious,
     onSkip
 }: BusinessProfileStepProps) => {
-    const toggleBusinessGoal = (goal: string) => {
-        setBusinessProfile(prev => ({
-            ...prev,
-            businessGoals: prev.businessGoals.includes(goal)
-                ? prev.businessGoals.filter(g => g !== goal)
-                : [...prev.businessGoals, goal]
-        }));
-    };
-
-    const toggleTargetAudience = (audience: string) => {
-        setBusinessProfile(prev => ({
-            ...prev,
-            targetAudience: prev.targetAudience.includes(audience)
-                ? prev.targetAudience.filter(a => a !== audience)
-                : [...prev.targetAudience, audience]
-        }));
-    };
+    const { toggleBusinessGoal, toggleTargetAudience } = useBusinessProfileStep(setBusinessProfile);
 
     return (
         <Card>
@@ -135,8 +120,8 @@ export const BusinessProfileStep = ({
                             <div
                                 key={goal}
                                 className={`p-3 border rounded-lg cursor-pointer transition-all ${businessProfile.businessGoals.includes(goal)
-                                        ? 'border-primary bg-primary/5 text-primary'
-                                        : 'border-border hover:border-primary/50'
+                                    ? 'border-primary bg-primary/5 text-primary'
+                                    : 'border-border hover:border-primary/50'
                                     }`}
                                 onClick={() => toggleBusinessGoal(goal)}
                             >
@@ -172,8 +157,8 @@ export const BusinessProfileStep = ({
                             <div
                                 key={audience}
                                 className={`p-3 border rounded-lg cursor-pointer transition-all ${businessProfile.targetAudience.includes(audience)
-                                        ? 'border-primary bg-primary/5 text-primary'
-                                        : 'border-border hover:border-primary/50'
+                                    ? 'border-primary bg-primary/5 text-primary'
+                                    : 'border-border hover:border-primary/50'
                                     }`}
                                 onClick={() => toggleTargetAudience(audience)}
                             >
@@ -188,12 +173,12 @@ export const BusinessProfileStep = ({
             </CardContent>
             <div className="p-6 pt-0">
                 <div className="flex justify-between">
-                    <Button variant="outline" onClick={onSkip} disabled={loading}>
-                        Skip to Payment
+                    <Button variant="outline" onClick={onPrevious}>
+                        Previous
                     </Button>
                     <div className="flex space-x-2">
-                        <Button variant="outline" onClick={onPrevious}>
-                            Previous
+                        <Button variant="outline" onClick={onSkip} disabled={loading}>
+                            Skip to Payment
                         </Button>
                         <Button onClick={onNext} disabled={loading}>
                             Continue to Payment

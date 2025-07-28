@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Target, Zap, TrendingUp, DollarSign, Clock, Shield, Smartphone } from "lucide-react";
+import { CheckCircle, Target, Zap, TrendingUp, DollarSign, Clock } from "lucide-react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";

@@ -1,102 +1,38 @@
 'use client'
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Separator } from '@/components/ui/separator';
 
-import { User, Mail, Phone, MapPin, Calendar, Shield, CreditCard, Camera, Edit3, CheckCircle } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
+import { User, Mail, Phone, MapPin, CheckCircle, Camera, Edit3 } from 'lucide-react';
+import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/hooks/useAuth';
 
 const Profile = () => {
     const { user, signOut, isAuthenticated, loading } = useAuth();
     const router = useRouter();
     const [isEditing, setIsEditing] = useState(false);
-    const [saveLoading, setSaveLoading] = useState(false);
-    const [success, setSuccess] = useState('');
-    const [error, setError] = useState('');
-
-    // Profile data state matching 'profiles' table
-    const [profileData, setProfileData] = useState({
-        email: '',
-        ownerName: '',
-        businessName: '',
-        industry: '',
-        phone: '',
-        address: '',
-        businessGoals: ''
-    });
-
-    const handleInputChange = (field: string, value: string) => {
-        setProfileData((prev) => ({ ...prev, [field]: value }));
-    };
-
-    // Load profile from Supabase when user is available
-    useEffect(() => {
-        if (!user) return;
-        const loadProfile = async () => {
-            const { data, error } = await supabase
-                .from('profiles')
-                .select('owner_name, business_name, industry, phone, address, business_goals')
-                .eq('user_id', user.id)
-                .single();
-            if (error && error.code !== 'PGRST116') {
-                console.error('Error loading profile:', error.message);
-            } else if (data) {
-                setProfileData({
-                    email: user.email || '',
-                    ownerName: data.owner_name || '',
-                    businessName: data.business_name || '',
-                    industry: data.industry || '',
-                    phone: data.phone || '',
-                    address: data.address || '',
-                    businessGoals: data.business_goals ? data.business_goals.join(', ') : ''
-                });
-            }
-        };
-        loadProfile();
-    }, [user]);
-
-    const handleSave = async () => {
-        setSaveLoading(true);
-        setError('');
-        setSuccess('');
-        try {
-            const { error } = await supabase
-                .from('profiles')
-                .upsert({
-                    user_id: user.id,
-                    owner_name: profileData.ownerName,
-                    business_name: profileData.businessName,
-                    industry: profileData.industry,
-                    phone: profileData.phone,
-                    address: profileData.address,
-                    business_goals: profileData.businessGoals.split(',').map(goal => goal.trim())
-                });
-            if (error) throw error;
-            setSuccess('Profile updated successfully!');
-            setIsEditing(false);
-        } catch (err) {
-            setError('Failed to update profile. Please try again.');
-        } finally {
-            setSaveLoading(false);
-        }
-    };
+    const {
+        profileData,
+        handleInputChange,
+        handleSave,
+        loading: profileLoading,
+        error,
+        success
+    } = useProfile(user);
 
     const handleSignOut = async () => {
         await signOut();
         router.push('/');
     };
 
-    // Show loading state while checking authentication
-    if (loading) {
+    // Show loading state while checking authentication or profile
+    if (loading || profileLoading) {
         return (
             <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="text-center">
@@ -124,8 +60,8 @@ const Profile = () => {
                             <span>{isEditing ? 'Cancel' : 'Edit Profile'}</span>
                         </Button>
                         {isEditing && (
-                            <Button onClick={handleSave} disabled={saveLoading}>
-                                {saveLoading ? 'Saving...' : 'Save'}
+                            <Button onClick={async () => { await handleSave(); setIsEditing(false); }}>
+                                Save
                             </Button>
                         )}
                         <Button onClick={handleSignOut} variant="destructive">

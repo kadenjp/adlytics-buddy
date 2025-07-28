@@ -1,10 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createStripeCustomer, createSubscription } from '@/lib/stripe';
+import { createSubscription, generateStripeIdempotencyKey } from '@/lib/providers/StripeProvider';
+import { findOrCreateCustomerWithPayment } from '@/lib/repositories/CustomerRepository';
+
+import { supabaseBusinessDatabase } from '@/lib/providers/SupabaseBusinessDatabaseProvider';
 import Stripe from 'stripe';
+import { stripePaymentProvider } from '@/lib/providers/StripePaymentProvider';
 
 export async function POST(req: NextRequest) {
     try {
-        const { email, name, paymentMethodId, address } = await req.json();
+        const { email, name, paymentMethodId, address, businessId } = await req.json();
 
         if (!email || !name || !paymentMethodId) {
             return NextResponse.json(
@@ -13,11 +17,22 @@ export async function POST(req: NextRequest) {
             );
         }
 
-        // Create Stripe customer with address
-        const customer = await createStripeCustomer(email, name, address);
+        // Create idempotency key based on email to prevent duplicate customers
+        const idempotencyKey = generateStripeIdempotencyKey(email, 'customer');
+
+        // Create or find existing Stripe customer with database check using injected providers
+        const customer = await findOrCreateCustomerWithPayment(
+            supabaseBusinessDatabase,
+            stripePaymentProvider,
+            email,
+            name,
+            businessId,
+            address,
+            idempotencyKey
+        );
 
         // Create subscription
-        const subscription = await createSubscription(customer.id, paymentMethodId);
+        const subscription = await createSubscription(customer.id as string, paymentMethodId);
 
         // Handle the expanded payment_intent properly
         const invoice = subscription.latest_invoice as Stripe.Invoice & {
@@ -26,7 +41,7 @@ export async function POST(req: NextRequest) {
         const clientSecret = invoice?.payment_intent?.client_secret || null;
 
         return NextResponse.json({
-            customerId: customer.id,
+            customerId: customer.id as string,
             subscriptionId: subscription.id,
             clientSecret,
             status: subscription.status,

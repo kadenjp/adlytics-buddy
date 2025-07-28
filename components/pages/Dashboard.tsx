@@ -8,7 +8,6 @@ import { Progress } from "@/components/ui/progress";
 import { useAuth } from "@/hooks/useAuth";
 import { useRouter } from "next/navigation";
 import {
-  TrendingUp,
   Phone,
   Users,
   DollarSign,
@@ -41,7 +40,7 @@ const Dashboard = () => {
     return null;
   }
 
-  const handleSignOut = async () => {
+  const _handleSignOut = async () => {
     await signOut();
     router.push('/');
   };

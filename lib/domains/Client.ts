@@ -1,11 +1,12 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
+
 type AgencyClientRelationshipUpdate = Database['public']['Tables']['agency_client_relationships']['Update'];
 
-type Client = Database['public']['Tables']['clients']['Row'];
+type _Client = Database['public']['Tables']['clients']['Row'];
 type ClientInsert = Database['public']['Tables']['clients']['Insert'];
 type ClientUpdate = Database['public']['Tables']['clients']['Update'];
-type AgencyClientRelationship = Database['public']['Tables']['agency_client_relationships']['Row'];
+type _AgencyClientRelationship = Database['public']['Tables']['agency_client_relationships']['Row'];
 type AgencyClientRelationshipInsert = Database['public']['Tables']['agency_client_relationships']['Insert'];
 
 export class ClientService {
@@ -69,22 +70,22 @@ export class ClientService {
         const { data, error } = await supabase
             .from('clients')
             .select(`
-        *,
-        agency_client_relationships(
-          id,
-          status,
-          permissions,
-          request_message,
-          approved_at,
-          agencies(
-            id,
-            name,
-            description,
-            website,
-            contact_email
-          )
-        )
-      `)
+		*,
+		agency_client_relationships(
+		  id,
+		  status,
+		  permissions,
+		  request_message,
+		  approved_at,
+		  agencies(
+			id,
+			name,
+			description,
+			website,
+			contact_email
+		  )
+		)
+	  `)
             .eq('id', clientId);
 
         if (error) {
@@ -118,15 +119,15 @@ export class ClientService {
         const { data, error } = await supabase
             .from('agency_client_relationships')
             .select(`
-        *,
-        agencies(
-          id,
-          name,
-          description,
-          website,
-          contact_email
-        )
-      `)
+		*,
+		agencies(
+		  id,
+		  name,
+		  description,
+		  website,
+		  contact_email
+		)
+	  `)
             .eq('client_id', clientId)
             .eq('status', 'pending');
 
@@ -168,3 +169,4 @@ export class ClientService {
         return data;
     }
 }
+// ...existing code from lib/supabase/clients.ts...
