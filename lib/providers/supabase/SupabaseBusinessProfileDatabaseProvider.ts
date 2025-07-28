@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { IBusinessProfileDatabase } from '../interfaces/IBusinessProfileDatabase';
+import { IBusinessProfileDatabase } from '../../interfaces/IBusinessProfileDatabase';
 
 export const supabaseBusinessProfileDatabase: IBusinessProfileDatabase = {
     async getBusinessProfile(userId) {

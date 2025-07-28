@@ -1,10 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createSubscription, generateStripeIdempotencyKey } from '@/lib/providers/StripeProvider';
-import { findOrCreateCustomerWithPayment } from '@/lib/repositories/CustomerRepository';
+import { createSubscription, generateStripeIdempotencyKey } from '@/lib/providers/stripe/StripeProvider';
+import { findOrCreateCustomerWithPayment } from '@/lib/repositories/CustomerRepo';
 
-import { supabaseBusinessDatabase } from '@/lib/providers/SupabaseBusinessDatabaseProvider';
+import { supabaseBusinessDatabase } from '@/lib/providers/supabase/SupabaseBusinessDatabaseProvider';
 import Stripe from 'stripe';
-import { stripePaymentProvider } from '@/lib/providers/StripePaymentProvider';
+import { stripePaymentProvider } from '@/lib/providers/stripe/StripePaymentProvider';
 
 export async function POST(req: NextRequest) {
     try {

@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { UserService } from '@/lib/services/UserService';
-import { supabaseUserInformationDatabase } from '@/lib/providers/SupabaseUserInformationDatabaseProvider';
-import { supabaseBusinessProfileDatabase } from '@/lib/providers/SupabaseBusinessProfileDatabaseProvider';
+import { supabaseUserInformationDatabase } from '@/lib/providers/supabase/SupabaseUserInformationDatabaseProvider';
+import { supabaseBusinessProfileDatabase } from '@/lib/providers/supabase/SupabaseBusinessProfileDatabaseProvider';
 
 const initialUserInfo = {
     firstName: '',

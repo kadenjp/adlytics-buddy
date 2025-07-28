@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { ISubscriptionDatabase } from '../interfaces/ISubscriptionDatabase';
+import { ISubscriptionDatabase } from '../../interfaces/ISubscriptionDatabase';
 
 export const supabaseSubscriptionDatabase: ISubscriptionDatabase = {
     async upsertSubscription({ stripe_subscription_id, status, amount, user_id }) {

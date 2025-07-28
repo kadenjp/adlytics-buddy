@@ -1,5 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
-import { IUserInformationDatabase } from '../interfaces/IUserInformationDatabase';
+import { IUserInformationDatabase } from '../../interfaces/IUserInformationDatabase';
 
 export const supabaseUserInformationDatabase: IUserInformationDatabase = {
     async getUserInformation(userId) {
