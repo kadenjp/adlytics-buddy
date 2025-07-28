@@ -10,7 +10,7 @@ const Signup = () => {
   const auth = useAuth();
   const {
     currentStep,
-    setCurrentStep,
+    setCurrentStep: _setCurrentStep,
     userInfo,
     setUserInfo,
     businessInfo,

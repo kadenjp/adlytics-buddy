@@ -9,7 +9,7 @@ interface WelcomeStepProps {
     loading: boolean;
 }
 
-export const WelcomeStep = ({ loading }: WelcomeStepProps) => {
+export const WelcomeStep = ({ loading: _loading }: WelcomeStepProps) => {
     const router = useRouter();
 
     return (

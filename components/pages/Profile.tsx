@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 
-import { User, Mail, Phone, MapPin, Calendar, Shield, CreditCard, Camera, Edit3, CheckCircle } from 'lucide-react';
+import { User, Mail, Phone, MapPin, CheckCircle, Camera, Edit3 } from 'lucide-react';
 import { useProfile } from '@/hooks/useProfile';
 import { useAuth } from '@/hooks/useAuth';
 

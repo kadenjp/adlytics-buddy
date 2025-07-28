@@ -1,7 +1,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
-type Agency = Database['public']['Tables']['agencies']['Row'];
+type _Agency = Database['public']['Tables']['agencies']['Row'];
 type AgencyInsert = Database['public']['Tables']['agencies']['Insert'];
 type AgencyUpdate = Database['public']['Tables']['agencies']['Update'];
 

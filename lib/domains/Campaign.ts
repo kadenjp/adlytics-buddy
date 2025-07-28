@@ -2,7 +2,7 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
-type Campaign = Database['public']['Tables']['campaigns']['Row'];
+type _Campaign = Database['public']['Tables']['campaigns']['Row'];
 type CampaignInsert = Database['public']['Tables']['campaigns']['Insert'];
 type CampaignUpdate = Database['public']['Tables']['campaigns']['Update'];
 

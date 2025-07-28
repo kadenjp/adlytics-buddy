@@ -1,13 +1,13 @@
 import { supabase } from '@/integrations/supabase/client';
 import type { Database } from '@/integrations/supabase/types';
 
-type GoogleAdsAccount = Database['public']['Tables']['google_ads_accounts']['Row'];
+type _GoogleAdsAccount = Database['public']['Tables']['google_ads_accounts']['Row'];
 type GoogleAdsAccountInsert = Database['public']['Tables']['google_ads_accounts']['Insert'];
-type GoogleAdsAccountUpdate = Database['public']['Tables']['google_ads_accounts']['Update'];
+type _GoogleAdsAccountUpdate = Database['public']['Tables']['google_ads_accounts']['Update'];
 
-type GoogleMccAccount = Database['public']['Tables']['google_mcc_accounts']['Row'];
+type _GoogleMccAccount = Database['public']['Tables']['google_mcc_accounts']['Row'];
 type GoogleMccAccountInsert = Database['public']['Tables']['google_mcc_accounts']['Insert'];
-type GoogleMccAccountUpdate = Database['public']['Tables']['google_mcc_accounts']['Update'];
+type _GoogleMccAccountUpdate = Database['public']['Tables']['google_mcc_accounts']['Update'];
 
 export class GoogleAdsService {
     /**

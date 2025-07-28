@@ -3,10 +3,10 @@ import type { Database } from '@/integrations/supabase/types';
 
 type AgencyClientRelationshipUpdate = Database['public']['Tables']['agency_client_relationships']['Update'];
 
-type Client = Database['public']['Tables']['clients']['Row'];
+type _Client = Database['public']['Tables']['clients']['Row'];
 type ClientInsert = Database['public']['Tables']['clients']['Insert'];
 type ClientUpdate = Database['public']['Tables']['clients']['Update'];
-type AgencyClientRelationship = Database['public']['Tables']['agency_client_relationships']['Row'];
+type _AgencyClientRelationship = Database['public']['Tables']['agency_client_relationships']['Row'];
 type AgencyClientRelationshipInsert = Database['public']['Tables']['agency_client_relationships']['Insert'];
 
 export class ClientService {
