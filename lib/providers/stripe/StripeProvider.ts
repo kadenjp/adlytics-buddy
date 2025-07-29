@@ -2,11 +2,14 @@ import Stripe from 'stripe';
 // Removed supabase import; now handled in repository layer
 // Add Stripe.AddressParam type for address
 import { STRIPE_CONFIG } from '../../constants';
+import { createLogger } from '../logger';
+
+const logger = createLogger('StripeProvider');
 
 // Handle missing environment variables during build
 const stripeSecretKey = process.env.STRIPE_SECRET_KEY;
 if (!stripeSecretKey && process.env.NODE_ENV !== 'development') {
-    console.warn('STRIPE_SECRET_KEY is not defined. Stripe functionality will not work.');
+    logger.warn('STRIPE_SECRET_KEY is not defined. Stripe functionality will not work.');
 }
 
 export const stripe = stripeSecretKey ? new Stripe(stripeSecretKey, {

@@ -15,6 +15,9 @@ dist-ssr
 # Next.js build output
 .next/
 
+# Test coverage
+coverage/
+
 # Local environment variables
 .env.local
 .env.development.local

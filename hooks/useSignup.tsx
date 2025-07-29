@@ -71,7 +71,7 @@ export function useSignup(auth) {
             }
             setLoading(false);
             setCurrentStep(5);
-        } catch (err) {
+        } catch (_err) {
             setError('Payment successful but account creation failed. Please contact support.');
             setLoading(false);
         }
@@ -130,7 +130,7 @@ export function useSignup(auth) {
                 }
                 setLoading(false);
                 router.push('/dashboard');
-            } catch (err) {
+            } catch (_err) {
                 setError('An unexpected error occurred. Please try again.');
                 setLoading(false);
             }
