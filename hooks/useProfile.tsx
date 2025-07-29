@@ -37,7 +37,7 @@ export function useProfile(user) {
                     address: profile?.business?.business_address || '',
                     businessGoals: profile?.business?.business_goals ? profile.business.business_goals.join(', ') : ''
                 });
-            } catch (err) {
+            } catch (_err) {
                 setError('Failed to load profile. Please try again.');
             } finally {
                 setLoading(false);
@@ -73,7 +73,7 @@ export function useProfile(user) {
                 business_goals: profileData.businessGoals.split(',').map(goal => goal.trim())
             });
             setSuccess('Profile updated successfully!');
-        } catch (err) {
+        } catch (_err) {
             setError('Failed to update profile. Please try again.');
         } finally {
             setLoading(false);

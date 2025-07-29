@@ -1,4 +1,4 @@
-import { renderHook, act } from '@testing-library/react';
+import { renderHook, act, waitFor } from '@testing-library/react';
 import { useProfile } from '../useProfile';
 
 // Mock UserService
@@ -78,14 +78,12 @@ describe('useProfile', () => {
 
       const { result } = renderHook(() => useProfile(mockUser));
 
-      expect(result.current.loading).toBe(true);
-
-      await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+      // Wait for the async operation to complete
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
       });
 
       expect(mockGetUserProfile).toHaveBeenCalledWith('user123');
-      expect(result.current.loading).toBe(false);
       expect(result.current.profileData).toEqual({
         email: 'test@example.com',
         ownerName: 'John Doe',
@@ -105,8 +103,8 @@ describe('useProfile', () => {
 
       const { result } = renderHook(() => useProfile(mockUser));
 
-      await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
       });
 
       expect(result.current.profileData).toEqual({
@@ -134,8 +132,8 @@ describe('useProfile', () => {
 
       const { result } = renderHook(() => useProfile(mockUser));
 
-      await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
       });
 
       expect(result.current.profileData).toEqual({
@@ -154,11 +152,10 @@ describe('useProfile', () => {
 
       const { result } = renderHook(() => useProfile(mockUser));
 
-      await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
       });
 
-      expect(result.current.loading).toBe(false);
       expect(result.current.error).toBe('Failed to load profile. Please try again.');
     });
   });
@@ -172,8 +169,8 @@ describe('useProfile', () => {
       const { result } = renderHook(() => useProfile(mockUser));
 
       // Wait for initial load
-      await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
       });
 
       // Update profile data
@@ -213,8 +210,8 @@ describe('useProfile', () => {
       const { result } = renderHook(() => useProfile(mockUser));
 
       // Wait for initial load
-      await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
       });
 
       // Update with single name
@@ -242,8 +239,8 @@ describe('useProfile', () => {
       const { result } = renderHook(() => useProfile(mockUser));
 
       // Wait for initial load
-      await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
       });
 
       // Update business goals
@@ -267,8 +264,8 @@ describe('useProfile', () => {
       const { result } = renderHook(() => useProfile(mockUser));
 
       // Wait for initial load
-      await act(async () => {
-        await new Promise(resolve => setTimeout(resolve, 0));
+      await waitFor(() => {
+        expect(result.current.loading).toBe(false);
       });
 
       await act(async () => {

@@ -11,13 +11,13 @@ describe('usePaymentStep', () => {
       paymentMethod: null,
       planId: '',
     };
-    
+
     mockSetPaymentInfo = jest.fn();
   });
 
   describe('handleTermsChecked', () => {
     it('should set termsAccepted to true when checked is true', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         usePaymentStep(mockSetPaymentInfo)
       );
 
@@ -42,8 +42,8 @@ describe('usePaymentStep', () => {
         ...mockPaymentInfo,
         termsAccepted: true,
       };
-      
-      const { result } = renderHook(() => 
+
+      const { result } = renderHook(() =>
         usePaymentStep(mockSetPaymentInfo)
       );
 
@@ -58,7 +58,7 @@ describe('usePaymentStep', () => {
     });
 
     it('should set termsAccepted to false when checked is falsy', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         usePaymentStep(mockSetPaymentInfo)
       );
 
@@ -73,7 +73,7 @@ describe('usePaymentStep', () => {
     });
 
     it('should set termsAccepted to true when checked is truthy', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         usePaymentStep(mockSetPaymentInfo)
       );
 
@@ -96,7 +96,7 @@ describe('usePaymentStep', () => {
         subscriptionId: 'sub_456',
       };
 
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         usePaymentStep(mockSetPaymentInfo)
       );
 
@@ -115,7 +115,7 @@ describe('usePaymentStep', () => {
     });
 
     it('should handle multiple toggle operations', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         usePaymentStep(mockSetPaymentInfo)
       );
 
@@ -125,7 +125,7 @@ describe('usePaymentStep', () => {
       });
 
       let updaterFunction = mockSetPaymentInfo.mock.calls[0][0];
-      let currentState = updaterFunction(mockPaymentInfo);
+      const currentState = updaterFunction(mockPaymentInfo);
 
       // Uncheck terms
       act(() => {
@@ -140,7 +140,7 @@ describe('usePaymentStep', () => {
     });
 
     it('should handle undefined checked value', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         usePaymentStep(mockSetPaymentInfo)
       );
 
@@ -155,7 +155,7 @@ describe('usePaymentStep', () => {
     });
 
     it('should handle zero as checked value', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         usePaymentStep(mockSetPaymentInfo)
       );
 
@@ -170,7 +170,7 @@ describe('usePaymentStep', () => {
     });
 
     it('should handle non-zero number as checked value', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         usePaymentStep(mockSetPaymentInfo)
       );
 
@@ -185,7 +185,7 @@ describe('usePaymentStep', () => {
     });
 
     it('should handle empty string as checked value', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         usePaymentStep(mockSetPaymentInfo)
       );
 
@@ -250,7 +250,7 @@ describe('usePaymentStep', () => {
 
   describe('return value', () => {
     it('should return an object with handleTermsChecked function', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         usePaymentStep(mockSetPaymentInfo)
       );
 
@@ -260,14 +260,14 @@ describe('usePaymentStep', () => {
     });
 
     it('should return the same object shape on re-renders', () => {
-      const { result, rerender } = renderHook(() => 
+      const { result, rerender } = renderHook(() =>
         usePaymentStep(mockSetPaymentInfo)
       );
 
       const firstResult = result.current;
-      
+
       rerender();
-      
+
       const secondResult = result.current;
 
       expect(Object.keys(firstResult)).toEqual(Object.keys(secondResult));
@@ -277,7 +277,7 @@ describe('usePaymentStep', () => {
 
   describe('edge cases', () => {
     it('should throw error when setter is undefined', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         usePaymentStep(undefined)
       );
 
@@ -288,7 +288,7 @@ describe('usePaymentStep', () => {
     });
 
     it('should throw error when setter is null', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         usePaymentStep(null)
       );
 
@@ -299,13 +299,13 @@ describe('usePaymentStep', () => {
     });
 
     it('should throw error when setter is not a function', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         usePaymentStep('not-a-function' as any)
       );
 
       // Should not throw an error during render, but should throw when called
       expect(result.current.handleTermsChecked).toBeDefined();
-      
+
       expect(() => {
         result.current.handleTermsChecked(true);
       }).toThrow('setPaymentInfo is not a function');

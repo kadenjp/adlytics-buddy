@@ -13,13 +13,13 @@ describe('useBusinessProfileStep', () => {
       targetAge: [25, 55] as [number, number],
       targetAudience: [],
     };
-    
+
     mockSetBusinessProfile = jest.fn();
   });
 
   describe('toggleBusinessGoal', () => {
     it('should add a goal when it is not in the list', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         useBusinessProfileStep(mockSetBusinessProfile)
       );
 
@@ -46,8 +46,8 @@ describe('useBusinessProfileStep', () => {
         ...mockBusinessProfile,
         businessGoals: ['Growth', 'Expansion', 'Marketing'],
       };
-      
-      const { result } = renderHook(() => 
+
+      const { result } = renderHook(() =>
         useBusinessProfileStep(mockSetBusinessProfile)
       );
 
@@ -62,7 +62,7 @@ describe('useBusinessProfileStep', () => {
     });
 
     it('should handle adding multiple goals sequentially', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         useBusinessProfileStep(mockSetBusinessProfile)
       );
 
@@ -72,7 +72,7 @@ describe('useBusinessProfileStep', () => {
 
       // Simulate state update
       let updaterFunction = mockSetBusinessProfile.mock.calls[0][0];
-      let currentState = updaterFunction(mockBusinessProfile);
+      const currentState = updaterFunction(mockBusinessProfile);
 
       act(() => {
         result.current.toggleBusinessGoal('Marketing');
@@ -85,7 +85,7 @@ describe('useBusinessProfileStep', () => {
     });
 
     it('should handle empty goal string', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         useBusinessProfileStep(mockSetBusinessProfile)
       );
 
@@ -104,8 +104,8 @@ describe('useBusinessProfileStep', () => {
         ...mockBusinessProfile,
         businessGoals: ['Growth'],
       };
-      
-      const { result } = renderHook(() => 
+
+      const { result } = renderHook(() =>
         useBusinessProfileStep(mockSetBusinessProfile)
       );
 
@@ -128,7 +128,7 @@ describe('useBusinessProfileStep', () => {
         targetAudience: ['Adults', 'Seniors'],
       };
 
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         useBusinessProfileStep(mockSetBusinessProfile)
       );
 
@@ -149,7 +149,7 @@ describe('useBusinessProfileStep', () => {
 
   describe('toggleTargetAudience', () => {
     it('should add an audience when it is not in the list', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         useBusinessProfileStep(mockSetBusinessProfile)
       );
 
@@ -175,8 +175,8 @@ describe('useBusinessProfileStep', () => {
         ...mockBusinessProfile,
         targetAudience: ['Young Adults', 'Professionals', 'Seniors'],
       };
-      
-      const { result } = renderHook(() => 
+
+      const { result } = renderHook(() =>
         useBusinessProfileStep(mockSetBusinessProfile)
       );
 
@@ -191,7 +191,7 @@ describe('useBusinessProfileStep', () => {
     });
 
     it('should handle adding multiple audiences sequentially', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         useBusinessProfileStep(mockSetBusinessProfile)
       );
 
@@ -200,7 +200,7 @@ describe('useBusinessProfileStep', () => {
       });
 
       let updaterFunction = mockSetBusinessProfile.mock.calls[0][0];
-      let currentState = updaterFunction(mockBusinessProfile);
+      const currentState = updaterFunction(mockBusinessProfile);
 
       act(() => {
         result.current.toggleTargetAudience('Professionals');
@@ -213,7 +213,7 @@ describe('useBusinessProfileStep', () => {
     });
 
     it('should handle empty audience string', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         useBusinessProfileStep(mockSetBusinessProfile)
       );
 
@@ -232,8 +232,8 @@ describe('useBusinessProfileStep', () => {
         ...mockBusinessProfile,
         targetAudience: ['Young Adults'],
       };
-      
-      const { result } = renderHook(() => 
+
+      const { result } = renderHook(() =>
         useBusinessProfileStep(mockSetBusinessProfile)
       );
 
@@ -256,7 +256,7 @@ describe('useBusinessProfileStep', () => {
         targetAudience: ['Young Adults'],
       };
 
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         useBusinessProfileStep(mockSetBusinessProfile)
       );
 
@@ -346,7 +346,7 @@ describe('useBusinessProfileStep', () => {
 
   describe('integration', () => {
     it('should handle toggling both goals and audiences', () => {
-      const { result } = renderHook(() => 
+      const { result } = renderHook(() =>
         useBusinessProfileStep(mockSetBusinessProfile)
       );
 
@@ -356,7 +356,7 @@ describe('useBusinessProfileStep', () => {
       });
 
       let updaterFunction = mockSetBusinessProfile.mock.calls[0][0];
-      let currentState = updaterFunction(mockBusinessProfile);
+      const currentState = updaterFunction(mockBusinessProfile);
 
       // Add an audience
       act(() => {

@@ -30,10 +30,10 @@ describe('Campaign module', () => {
                 try {
                     const instance = new exported();
                     expect(instance).toBeDefined();
-                } catch (e) {
+                } catch (_e) {
                     try {
                         exported();
-                    } catch (err) {
+                    } catch (_err) {
                         // ignore
                     }
                 }

@@ -2,14 +2,12 @@
 require('whatwg-fetch');
 require('@testing-library/jest-dom');
 
+// Suppress console warnings in tests to reduce noise
+// These warnings are mostly React act() warnings that are expected in our test environment
 global.console = {
     ...console,
-    // Uncomment to ignore a specific log level
-    // log: jest.fn(),
-    // debug: jest.fn(),
-    // info: jest.fn(),
-    // warn: jest.fn(),
-    // error: jest.fn(),
+    error: jest.fn(),
+    warn: jest.fn(),
 };
 
 // Mock environment variables

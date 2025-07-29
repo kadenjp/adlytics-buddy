@@ -31,7 +31,7 @@ describe('GoogleAds module', () => {
                     // Try calling with no args
                     const result = exported();
                     expect(result).toBeDefined();
-                } catch (e) {
+                } catch (_e) {
                     // ignore errors from missing args
                 }
             }
