@@ -1,11 +1,4 @@
-import {
-    generateStripeIdempotencyKey,
-    findOrCreateStripeCustomer,
-    createSubscription,
-    STRIPE_PRICE_ID,
-} from '../../providers/stripe/StripeProvider';
-
-// Create mock functions first
+// Create mock functions first - before any imports
 const mockCustomersCreate = jest.fn();
 const mockCustomersUpdate = jest.fn();
 const mockCustomersList = jest.fn();
@@ -28,6 +21,13 @@ jest.mock('stripe', () => {
         },
     }));
 });
+
+import {
+    generateStripeIdempotencyKey,
+    findOrCreateStripeCustomer,
+    createSubscription,
+    STRIPE_PRICE_ID,
+} from '../../providers/stripe/StripeProvider';
 
 describe('StripeProvider', () => {
     // Mock environment variable for tests
