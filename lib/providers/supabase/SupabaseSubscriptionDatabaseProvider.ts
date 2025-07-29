@@ -1,5 +1,8 @@
 import { supabase } from '@/integrations/supabase/client';
 import { ISubscriptionDatabase } from '../../interfaces/ISubscriptionDatabase';
+import { createLogger } from '../logger';
+
+const logger = createLogger('SupabaseSubscriptionDatabase');
 
 export const supabaseSubscriptionDatabase: ISubscriptionDatabase = {
     async upsertSubscription({ stripe_subscription_id, status, amount, user_id }) {
@@ -22,11 +25,11 @@ export const supabaseSubscriptionDatabase: ISubscriptionDatabase = {
     async handlePaymentSucceeded(customerId, invoiceId) {
         // Add custom logic for payment success if needed
         // For now, just log
-        console.log(`Payment succeeded for customer: ${customerId}, invoice: ${invoiceId}`);
+        logger.info(`Payment succeeded for customer: ${customerId}, invoice: ${invoiceId}`, { customerId, invoiceId });
     },
     async handlePaymentFailed(customerId, invoiceId) {
         // Add custom logic for payment failure if needed
         // For now, just log
-        console.log(`Payment failed for customer: ${customerId}, invoice: ${invoiceId}`);
+        logger.warn(`Payment failed for customer: ${customerId}, invoice: ${invoiceId}`, { customerId, invoiceId });
     },
 };
