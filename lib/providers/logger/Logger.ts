@@ -1,4 +1,16 @@
-import winston from 'winston';
+// Browser-safe logger that conditionally uses Winston only on server-side
+let winston: any = null;
+
+// Only import winston on server-side
+if (typeof window === 'undefined') {
+    try {
+        // eslint-disable-next-line @typescript-eslint/no-require-imports
+        winston = require('winston');
+    } catch (_error) {
+        // Winston not available, fallback to console
+        winston = null;
+    }
+}
 
 // Define log levels with colors
 const logLevels = {
@@ -17,90 +29,105 @@ const logColors = {
     debug: 'blue',
 };
 
-// Add colors to winston
-winston.addColors(logColors);
+// Server-side Winston logger instance
+let winstonLogger: any = null;
 
-// Custom format for development
-const developmentFormat = winston.format.combine(
-    winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
-    winston.format.colorize({ all: true }),
-    winston.format.printf(
-        (info) => `${info.timestamp} [${info.level}]: ${info.message}`
-    )
-);
+// Initialize Winston only on server-side
+const initializeWinston = () => {
+    if (!winston || winstonLogger) return;
 
-// Custom format for production
-const productionFormat = winston.format.combine(
-    winston.format.timestamp(),
-    winston.format.errors({ stack: true }),
-    winston.format.json()
-);
+    // Add colors to winston
+    winston.addColors(logColors);
 
-// Determine log level based on environment
-const getLogLevel = (): string => {
-    const env = process.env.NODE_ENV || 'development';
-    const isDevelopment = env === 'development';
-    const isTest = env === 'test';
+    // Custom format for development
+    const developmentFormat = winston.format.combine(
+        winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
+        winston.format.colorize({ all: true }),
+        winston.format.printf(
+            (info: any) => `${info.timestamp} [${info.level}]: ${info.message}`
+        )
+    );
 
-    if (isTest) return 'error'; // Only log errors in test environment
-    return isDevelopment ? 'debug' : 'warn';
+    // Custom format for production
+    const productionFormat = winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.errors({ stack: true }),
+        winston.format.json()
+    );
+
+    // Determine log level based on environment
+    const getLogLevel = (): string => {
+        const env = process.env.NODE_ENV || 'development';
+        const isDevelopment = env === 'development';
+        const isTest = env === 'test';
+
+        if (isTest) return 'error'; // Only log errors in test environment
+        return isDevelopment ? 'debug' : 'warn';
+    };
+
+    // Create transports based on environment
+    const getTransports = (): any[] => {
+        const env = process.env.NODE_ENV || 'development';
+        const isDevelopment = env === 'development';
+        const isTest = env === 'test';
+
+        const transports: any[] = [];
+
+        if (isTest) {
+            // In test environment, use minimal console transport
+            transports.push(
+                new winston.transports.Console({
+                    silent: true, // Silent by default in tests
+                    format: winston.format.simple(),
+                })
+            );
+        } else if (isDevelopment) {
+            // In development, log to console
+            transports.push(
+                new winston.transports.Console({
+                    format: developmentFormat,
+                })
+            );
+        } else {
+            // In production, log to console with JSON format
+            transports.push(
+                new winston.transports.Console({
+                    format: productionFormat,
+                })
+            );
+
+            // Only add file transports on server-side in production
+            if (typeof window === 'undefined') {
+                transports.push(
+                    new winston.transports.File({
+                        filename: 'logs/error.log',
+                        level: 'error',
+                        format: productionFormat,
+                    }),
+                    new winston.transports.File({
+                        filename: 'logs/combined.log',
+                        format: productionFormat,
+                    })
+                );
+            }
+        }
+
+        return transports;
+    };
+
+    // Create the logger instance
+    winstonLogger = winston.createLogger({
+        level: getLogLevel(),
+        levels: logLevels,
+        transports: getTransports(),
+        exitOnError: false,
+    });
 };
 
-// Create transports based on environment
-const getTransports = (): winston.transport[] => {
-    const env = process.env.NODE_ENV || 'development';
-    const isDevelopment = env === 'development';
-    const isTest = env === 'test';
-
-    const transports: winston.transport[] = [];
-
-    if (isTest) {
-        // In test environment, use minimal console transport
-        transports.push(
-            new winston.transports.Console({
-                silent: true, // Silent by default in tests
-                format: winston.format.simple(),
-            })
-        );
-    } else if (isDevelopment) {
-        // In development, log to console
-        transports.push(
-            new winston.transports.Console({
-                format: developmentFormat,
-            })
-        );
-    } else {
-        // In production, log to console with JSON format
-        transports.push(
-            new winston.transports.Console({
-                format: productionFormat,
-            })
-        );
-
-        // Optionally add file transports for production
-        transports.push(
-            new winston.transports.File({
-                filename: 'logs/error.log',
-                level: 'error',
-                format: productionFormat,
-            }),
-            new winston.transports.File({
-                filename: 'logs/combined.log',
-                format: productionFormat,
-            })
-        );
-    }
-
-    return transports;
-};
-
-// Create the logger instance
-const logger = winston.createLogger({
-    level: getLogLevel(),
-    levels: logLevels,
-    transports: getTransports(),
-    exitOnError: false,
-});
+// Initialize Winston if available
+if (winston) {
+    initializeWinston();
+}
 
 // Logger interface for better type safety
 export interface ILogger {
@@ -130,20 +157,29 @@ export class Logger implements ILogger {
         if (this.isTest) {
             // Silent in test unless specifically enabled
             if (process.env.LOGGER_ENABLED === 'true') {
-                console[level as 'error' | 'warn' | 'info' | 'debug'] || console.log(this.formatMessage(message), meta);
+                const consoleMethod = console[level as 'error' | 'warn' | 'info' | 'debug'] || console.log;
+                consoleMethod(this.formatMessage(message), meta);
             }
             return;
         }
 
         try {
-            if (meta) {
-                logger.log(level, this.formatMessage(message), { meta });
+            // Use Winston on server-side, console on client-side
+            if (winstonLogger && typeof window === 'undefined') {
+                if (meta) {
+                    winstonLogger.log(level, this.formatMessage(message), { meta });
+                } else {
+                    winstonLogger.log(level, this.formatMessage(message));
+                }
             } else {
-                logger.log(level, this.formatMessage(message));
+                // Browser fallback to console
+                const consoleMethod = console[level as 'error' | 'warn' | 'info' | 'debug'] || console.log;
+                consoleMethod(this.formatMessage(message), meta);
             }
-        } catch (error) {
+        } catch (_error) {
             // Fallback to console if winston fails
-            console[level as 'error' | 'warn' | 'info' | 'debug'] || console.log(this.formatMessage(message), meta);
+            const consoleMethod = console[level as 'error' | 'warn' | 'info' | 'debug'] || console.log;
+            consoleMethod(this.formatMessage(message), meta);
         }
     }
 
@@ -205,7 +241,7 @@ export class Logger implements ILogger {
 export const defaultLogger = new Logger();
 
 // Export the winston instance for advanced usage
-export { logger as winstonLogger };
+export { winstonLogger };
 
 // Factory function to create context-specific loggers
 export const createLogger = (context: string): Logger => {
