@@ -5,6 +5,9 @@ import { findOrCreateCustomerWithPayment } from '@/lib/repositories/CustomerRepo
 import { supabaseBusinessDatabase } from '@/lib/providers/supabase/SupabaseBusinessDatabaseProvider';
 import Stripe from 'stripe';
 import { stripePaymentProvider } from '@/lib/providers/stripe/StripePaymentProvider';
+import { createLogger } from '@/lib/providers/logger';
+
+const logger = createLogger('CreateSubscriptionAPI');
 
 export async function POST(req: NextRequest) {
     try {
@@ -47,7 +50,7 @@ export async function POST(req: NextRequest) {
             status: subscription.status,
         });
     } catch (error: unknown) {
-        console.error('Stripe subscription error:', error);
+        logger.apiError('POST', '/api/create-subscription', error instanceof Error ? error : new Error('Unknown error'), 500);
         const errorMessage = error instanceof Error ? error.message : 'Failed to create subscription';
         return NextResponse.json(
             { error: errorMessage },

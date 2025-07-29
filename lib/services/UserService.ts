@@ -11,6 +11,9 @@ import {
     UserOnboardingData,
     UserWithRelationships
 } from "../../integrations/supabase/user-types";
+import { createLogger } from '../providers/logger';
+
+const logger = createLogger('UserService');
 
 export class UserService {
     constructor(
@@ -35,7 +38,7 @@ export class UserService {
                 clients: []
             };
         } catch (error) {
-            console.error("Error fetching user profile:", error);
+            logger.error("Error fetching user profile", { userId, error: error instanceof Error ? error.message : error });
             throw error;
         }
     }
@@ -51,7 +54,7 @@ export class UserService {
             const result = await this.userInformationDb.upsertUserInformation(userId, data);
             return result as UserInformation;
         } catch (error) {
-            console.error("Error upserting user information:", error);
+            logger.error("Error upserting user information", { userId, error: error instanceof Error ? error.message : error });
             throw error;
         }
     }
@@ -67,7 +70,7 @@ export class UserService {
             const result = await this.businessProfileDb.upsertBusinessProfile(userId, data);
             return result as BusinessProfile;
         } catch (error) {
-            console.error("Error upserting business profile:", error);
+            logger.error("Error upserting business profile", { userId, error: error instanceof Error ? error.message : error });
             throw error;
         }
     }
@@ -89,7 +92,7 @@ export class UserService {
                 clients: []
             };
         } catch (error) {
-            console.error("Error completing onboarding:", error);
+            logger.error("Error completing onboarding", { userId, error: error instanceof Error ? error.message : error });
             throw error;
         }
     }
@@ -112,7 +115,7 @@ export class UserService {
                 agency_relationships: []
             };
         } catch (error) {
-            console.error("Error fetching user with relationships:", error);
+            logger.error("Error fetching user with relationships", { userId, error: error instanceof Error ? error.message : error });
             throw error;
         }
     }
@@ -128,7 +131,7 @@ export class UserService {
             const result = await this.userInformationDb.updateUserInformation(userId, updates);
             return result as UserInformation;
         } catch (error) {
-            console.error("Error updating user information:", error);
+            logger.error("Error updating user information", { userId, error: error instanceof Error ? error.message : error });
             throw error;
         }
     }
@@ -143,7 +146,7 @@ export class UserService {
         try {
             await this.businessProfileDb.updateBusinessProfile(userId, updates);
         } catch (error) {
-            console.error("Error updating business profile:", error);
+            logger.error("Error updating business profile", { userId, error: error instanceof Error ? error.message : error });
             throw error;
         }
     }
@@ -156,7 +159,7 @@ export class UserService {
             await this.businessProfileDb.deleteBusinessProfile(userId);
             await this.userInformationDb.deleteUserInformation(userId);
         } catch (error) {
-            console.error("Error deleting user data:", error);
+            logger.error("Error deleting user data", { userId, error: error instanceof Error ? error.message : error });
             throw error;
         }
     }
