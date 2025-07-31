@@ -240,7 +240,7 @@ const LandingPage = () => {
               <Button variant="secondary" size="lg" className="text-lg px-8 py-6 h-auto">
                 Schedule Demo
               </Button>
-              <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScUWtki3mw2r53ZZggQ911vHt8Vuk0v7kiLJEfL7P1B31kObg/viewform?embedded=true" width="640" height="856" frameborder="0" marginheight="0" marginwidth="0">Loading…</iframe>
+              <iframe src="https://docs.google.com/forms/d/e/1FAIpQLScUWtki3mw2r53ZZggQ911vHt8Vuk0v7kiLJEfL7P1B31kObg/viewform?embedded=true" width="640" height="856" frameBorder="0" marginheight="0" marginwidth="0">Loading…</iframe>
             </div>
           </div>
         </div>
