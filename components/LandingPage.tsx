@@ -13,13 +13,8 @@ const LandingPage = () => {
   const features = [
     {
       icon: <Clock className="h-6 w-6" />,
-      title: "15-Minute Setup",
+      title: "Quick Setup",
       description: "Create professional Google Ads campaigns in just 15 minutes with our guided builder."
-    },
-    {
-      icon: <DollarSign className="h-6 w-6" />,
-      title: "No Upfront Ad Budget",
-      description: "Start with just $150/month platform fee. Set your advertising budget when you're ready."
     },
     {
       icon: <Target className="h-6 w-6" />,
@@ -29,7 +24,12 @@ const LandingPage = () => {
     {
       icon: <TrendingUp className="h-6 w-6" />,
       title: "Business-Focused Metrics",
-      description: "Track calls, leads, and revenue instead of confusing advertising jargon."
+      description: "Track calls, leads, and revenue without confusing advertising jargon."
+    },
+    {
+      icon: <DollarSign className="h-6 w-6" />,
+      title: "Low Upfront Costs",
+      description: "Get your first 3 Months for just $149 + Advertising Fees. No long-term contracts required."
     }
   ];
 
